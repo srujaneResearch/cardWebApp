@@ -35,6 +35,7 @@
                 flex-direction: row;
                 justify-content: last baseline;
                 align-items: left;
+                text-decoration: none;
             }
 
             
@@ -110,21 +111,25 @@
         <div class="container">
         <div class="sidebar">
             <h3>Dashboard</h3>
-            <a><span class="material-symbols-outlined" style="margin-right:10px;">preliminary</span>Log out</a>
-                <!--
-                <a>Flash Card</a>
-                <a>Webinar</a>
-                <a>Personal Tutor</a>
-                <a>PPT Slides</a>
-                <a>Research</a>
-                <a>Post</a>-->
+            <a href="{% url 'logout' %}"><span class="material-symbols-outlined" style="margin-right:10px;">preliminary</span>Log out</a>
         </div>
         <div class="header">
-            <h1> Welcome</h1>
+            <h1>Welcome</h1>
         </div>
         <div class="content">
 
-            <div class="slides">box 1</div>
+            <div class="slides">
+                token Balance and description
+                {{ tokenBalance }}
+                {% if tokenBalance < 2499 %}
+                you need more then 2499 Tokens to use the cardfunction
+                {% else %}
+                
+                <a href="#">Generate USD</a>
+                <a href="#">Generate EUR</a>
+                {% endif %}
+            </div>
+            <div class="slides">Cards</div>
 
         </div>
         </div>

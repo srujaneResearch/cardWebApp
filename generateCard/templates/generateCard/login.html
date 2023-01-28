@@ -64,22 +64,32 @@
                 color: white;
             }
 
+            a{
+                color: black;
+                text-decoration: none;   
+            }
+
+            .tabs:hover{
+                border-bottom: 1px solid pink;
+            }
+
         </style>
     </head>
     <body>
         <div class="form-container">
             <div class="nav">
-                <div class="tabs active">
-                <h2>Login</h2>
+                <div class="tabs">
+                <a href="/"><h2>Login</h2></a>
                 </div>
                 <div class="tabs">
-                <h2>Singup</h2>
+                <a href="/singup"><h2>Singup</h2></a>
                 </div>
             </div>
             <br/>
             <br/>
             <div class="form">
                 <form class="form" method="POST" action="{% url 'loginAuth' %}">
+                    {% csrf_token %}
                     <input type="email" name="email" placeholder="Email" style="width: 100%;"/>
                     <br/>
                     <input type="password" name="password" placeholder="Password" style="width: 100%;"/>
