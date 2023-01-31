@@ -15,6 +15,10 @@ class CardTypes(models.Model):
     card_transaction_limit = models.BigIntegerField()
     card_kyc = models.BooleanField()
 
+class UserWallet(models.Model):
+    user_wallet = models.CharField(max_length=255)
+    wallet_user = models.OneToOneField(User,on_delete=models.CASCADE)
+
 class InitialPayment(models.Model):
     #card_generated = models.ForeignKey(CardGenerated,on_delete=models.CASCADE)
 
@@ -27,16 +31,16 @@ class InitialPayment(models.Model):
                                                             ('coinpayment','coinpayment')
                                                         ])
                                                             
-    coinpayment_tx_hash = models.CharField(max_length=255)
+    coinpayment_tx_hash = models.CharField(max_length=255,null=True,blank=True)
     payment_status = models.CharField(max_length=15,choices=[('initiated','initiated'),
                                                             ('rejected','rejected'),
                                                             ('successful','successful'),
                                                             ('approved','approved'),
                                                             ('pending','pending')])
-    payed_from_wallet_address = models.CharField(max_length=255)
-    payed_transaction_hash = models.CharField(max_length=255)
-    timestamp_initiated = models.DateTimeField(auto_now_add=True)
-    timestamp_finished = models.DateTimeField()
+    payed_from_wallet_address = models.CharField(max_length=255,null=True,blank=True)
+    payed_transaction_hash = models.CharField(max_length=255,null=True,blank=True)
+    timestamp_initiated = models.DateTimeField(auto_now_add=True,blank=True)
+    timestamp_finished = models.DateTimeField(null=True,blank=True)
 
 class CardGenerated(models.Model):
     card_type = models.ForeignKey(CardTypes,on_delete=models.CASCADE)
@@ -45,13 +49,16 @@ class CardGenerated(models.Model):
     card_holder_surname = models.CharField(max_length=40)
     card_holder_name = models.CharField(max_length=40)
     card_holder_addressline1 = models.TextField()
+    card_holder_addressline2 = models.TextField()
+
     card_holder_city = models.CharField(max_length=30)
     card_holder_country = models.CharField(max_length=50)
     card_holder_zip = models.IntegerField()
     card_number = models.BigIntegerField()
     card_expiry_month = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(12)])
-    card_expiry_month = models.IntegerField()
+    card_expiry_year = models.IntegerField()
     card_cvv = models.IntegerField()
+    card_balance = models.IntegerField()
     initial_payment_id = models.ForeignKey(InitialPayment,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -69,16 +76,16 @@ class TopupCard(models.Model):
                                                             ('coinpayment','coinpayment')
                                                         ])
                                                             
-    coinpayment_tx_hash = models.CharField(max_length=255)
+    coinpayment_tx_hash = models.CharField(max_length=255,null=True,blank=True)
     payment_status = models.CharField(max_length=15,choices=[('initiated','initiated'),
                                                             ('rejected','rejected'),
                                                             ('successful','successful'),
                                                             ('approved','approved'),
                                                             ('pending','pending')])
-    payed_from_wallet_address = models.CharField(max_length=255)
-    payed_transaction_hash = models.CharField(max_length=255)
+    payed_from_wallet_address = models.CharField(max_length=255,null=True,blank=True)
+    payed_transaction_hash = models.CharField(max_length=255,null=True,blank=True)
     timestamp_initiated = models.DateTimeField(auto_now_add=True)
-    timestamp_finished = models.DateTimeField()
+    timestamp_finished = models.DateTimeField(null=True,blank=True)
 
 
 

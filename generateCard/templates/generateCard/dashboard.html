@@ -1,138 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'generateCard/dashboard.css' %}"/>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <meta charset="utf-8" />
     <title>Dashboard</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1"name="viewport"/>
-        <style>
-
-
-        .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 48
-            color: black;
-            }
-
-
-            body{
-                background-color: rgb(242, 242, 242);
-                margin: 0px;
-                padding: 50px;
-            }
-            h1{
-                font-size: 20px;
-            }
-
-            a{
-                padding: 5px;
-                display: flex;
-                flex-direction: row;
-                justify-content: last baseline;
-                align-items: left;
-                text-decoration: none;
-            }
-
-            
-
-            a:hover{
-                background-color: rgb(230, 243, 255);
-                color: rgb(0, 119, 230);
-                font-weight: bold;
-            }
-
-            .container{
-                display: grid;
-                
-                
-                width: 100%;
-                grid-template-columns: 10% 90%;
-                grid-template-areas: 
-                "sb hd"
-                "sb ct"
-                "sb ct"
-                "sb ct"
-                "ft ft";
-            }
-
-            .sidebar{
-                border: 1px solid rgb(242, 242, 242);
-                grid-area: sb;
-                background-color: rgb(255, 255, 255);
-                display: flex;
-                flex-direction: column;
-                align-items: left;
-                padding: 10px;
-                font-family: 'Noto Sans', sans-serif;
-            }
-            .header{
-                border: 1px solid rgb(242, 242, 242);
-                display: flex;
-                flex-direction: row;
-                padding: 10px;
-                grid-area: hd;
-                justify-content: space-between;
-                font-family: 'Noto Sans', sans-serif;
-                background-color: rgb(255, 255, 255);
-            }
-
-            .header form{
-                margin-top: 13.36px;
-            }
-            .content{
-                display: flex;
-                flex-direction: column;
-                grid-area: ct;
-                border: 1px solid rgb(242, 242, 242);
-                background-color: rgb(245, 245, 245);
-            }
-            .footer{
-                grid-area: ft;
-            }
-
-            .slides{
-                display: flex;
-                justify-content: left;
-                padding: 10px;
-                margin: 20px;
-                background-color: rgb(255, 255, 255);
-
-            }
-
-        </style>
     </head>
 
     <body>
         <div class="container">
-        <div class="sidebar">
-            <h3>Dashboard</h3>
-            <a href="{% url 'logout' %}"><span class="material-symbols-outlined" style="margin-right:10px;">preliminary</span>Log out</a>
-        </div>
-        <div class="header">
-            <h1>Welcome</h1>
-        </div>
-        <div class="content">
-
-            <div class="slides">
-                token Balance and description
-                {{ tokenBalance }}
-                {% if tokenBalance < 2499 %}
-                you need more then 2499 Tokens to use the cardfunction
-                {% else %}
-                
-                <a href="#">Generate USD</a>
-                <a href="#">Generate EUR</a>
-                {% endif %}
+            <div class="sidebar">
+                <h3>Dashboard</h3>
+                <a href="{% url 'logout' %}"><span class="material-symbols-outlined" style="margin-right:10px;">preliminary</span>Log out</a>
             </div>
-            <div class="slides">Cards</div>
+            <div class="header">
+                <h1>Welcome</h1>
+            </div>
+            <div class="content">
+                <div class="slides">
+                    <div id="totalBalance gap">
+                        <div class="cheaders">
+                            <h3 class="itm">Total Balance</h3><span class="material-symbols-outlined itm">Account_Balance_Wallet</span>
+                        </div>
+                        <h1 id="tbalance">320000000 USD</h1>
+                    </div>
+                    <div class="userDetails gap">
+                        <div class="ucard">
+                            <span>Token Balance</span>
+                            <h3>{{ tokenBalance }} ETL</h3>
+                        </div>
+                        <div class="ucard">
+                            <span>Wallet Address</span>
+                            <h3>{{ wallet }}</h3>
+                        </div>
+                        <div class="ucard">
+                            <span>Email</span>
+                            <h3>{{ emailaddress }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="slides">
+                    <div class="cheaders gap">
+                        <h3 class="itm">Your Cards</h3><span class="material-symbols-outlined itm">Credit_Card</span>
+                    </div>
+                    {% if tokenBalance < 2499 %}
+                    <div class="debitcardContainer redalert">
+                        <span>you need more then 2499 Tokens to use the cardfunction</span>
+                    </div>
+                    {% else %}
+                    <div class="debitcardContainer">
+                        <div class="debitcardBox gap">
+                            <a href="#" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Attach_Money</span>Generate USD</a>
+                        </div>
+                        <div class="debitcardBox gap">
+                            <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Euro_Symbol</span>Generate EUR</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if card_status %}
+                    <div class="debitcardContainer">
+                        {% for cards in cardgenerated %}
+                        <div class="debitcardBox">
+                            <div class="debitcards"></div> 
+                            <div class="userDetails">
+                                    <div class="ucard">
+                                        <span>Card No.</span>
+                                        <h3>{{ cards.card_number }}</h3>
+                                    </div>
+                                    <div class="ucard">
+                                        <span>Expiry</span>
+                                        <h3>{{ cards.card_expiry_month }}/ {{ cards.card_expiry_year }}</h3>
+                                    </div>
+                                    <div class="ucard">
+                                        <span>CVV</span>
+                                        <h3>{{ cards.card_cvv }}</h3>
+                                    </div>
+                            </div>
+                            <div class="userDetails">
+                                <div class="ucard">
+                                    <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Account_Balance_Wallet</span>Balance</a>
+                                    <span>{{ cards.card_balance }} USD</span>
+                                </div>
+                                <div class="ucard">
+                                    <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Paid</span>Top up</a>
 
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <h2>No Card is issued to you</h2>
+                    {% endif %}
+                </div>
+            </div>
+<!-- The Modal -->
+        <div id="myModal" class="modal">
+        <!-- Modal content -->
+            <div class="modal-content">
+                <form class="form-css" name = "cgenform" action="{% url 'generateUSD'%}" method="POST" onsubmit="return validateForm()">
+                    {% csrf_token %}
+                    {{ cform.as_table }}
+                    <br/>
+                    <input type="submit" class="cardfunctions" value="Generate Virtual Debit Card">
+                </form>
+                <span class="close gap">&times;</span>
+            </div>
         </div>
-        </div>
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "flex";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+function validateForm() {
+  let x = document.forms["cgenform"]["amount"].value;
+  
+  x = Number(x)
+  if (isNaN(x) || x <=51) {
+    alert("Amount must be greater than 51");
+    return false;
+  }
+}
+</script>
 
 
     </body>

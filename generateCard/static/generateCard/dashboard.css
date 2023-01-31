@@ -1,0 +1,220 @@
+
+<style>
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48
+    color: black;
+    }
+
+
+    body{
+        background-color: rgb(242, 242, 242);
+        margin: 0px;
+        padding: 50px;
+    }
+    header.h1{
+        font-size: 20px;
+    }
+
+    a{
+        padding: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: last baseline;
+        align-items: left;
+        text-decoration: none;
+    }
+
+    
+
+    a:hover{
+        background-color: rgb(230, 243, 255);
+        color: rgb(0, 119, 230);
+        font-weight: bold;
+    }
+
+    .container{
+        display: grid;
+        
+        
+        width: 100%;
+        grid-template-columns: 10% 90%;
+        grid-template-areas: 
+        "sb hd"
+        "sb ct"
+        "sb ct"
+        "sb ct"
+        "ft ft";
+    }
+
+    .sidebar{
+        border: 1px solid rgb(242, 242, 242);
+        grid-area: sb;
+        background-color: rgb(255, 255, 255);
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        padding: 10px;
+        font-family: 'Noto Sans', sans-serif;
+    }
+    .header{
+        border: 1px solid rgb(242, 242, 242);
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        grid-area: hd;
+        justify-content: space-between;
+        font-family: 'Noto Sans', sans-serif;
+        background-color: rgb(255, 255, 255);
+    }
+
+    .header form{
+        margin-top: 13.36px;
+    }
+    .content{
+        display: flex;
+        flex-direction: column;
+        grid-area: ct;
+        border: 1px solid rgb(242, 242, 242);
+        background-color: rgb(245, 245, 245);
+        font-family: 'Noto Sans', sans-serif;
+    }
+    .footer{
+        grid-area: ft;
+    }
+
+    .slides{
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        margin: 20px;
+        background-color: rgb(255, 255, 255);
+
+    }
+    .gap{
+        margin: 10px;
+    }
+
+    #totalBalance{
+        display: flex;
+        flex-direction: column;
+    }
+    #tbalance{
+        font: 40px;
+    }
+    .userDetails{
+        display: flex;
+        flex-direction: row;
+    }
+    .ucard{
+        display: flex;
+        flex-direction: column;
+        margin: 5px;
+        color: rgb(0, 51, 102);
+    }
+
+    .ucard span{
+        color: grey;
+        font-weight: bold;
+    }
+
+    .debitcardContainer{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .dcardBox{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    
+
+    .debitcards{
+        height: 200px;
+        width: 320px;
+        background-image: url('images/visa_usd.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        
+    }
+
+    .cheaders{
+        display: flex;
+        flex-direction: row;
+        align-items:center;
+        font-size: 18px;
+    }
+
+    .cheaders .itm{
+        margin: 5px;
+    }
+
+    .cardfunctions{
+        padding: 10px 12px;
+        border: 1px solid rgb(102, 102, 102);
+        color: black;
+        font-size: 16px;
+        align-items: center;
+        background-color: none;
+    }
+
+    .cardfunctions span{
+        margin-right: 5px;
+        font-size: 16px;
+        
+    }
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; 
+        z-index: 1; /* Sit on top */
+        padding: auto; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: -webkit-fill-available;
+         /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 400px;
+        height: 500px;
+        display: flex;
+        }
+
+        /* The Close Button */
+        .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+        .form-css{
+            display: flex;
+            flex-direction: column;
+            font-family: 'Noto Sans', sans-serif;
+
+        }
+
+
+</style>
