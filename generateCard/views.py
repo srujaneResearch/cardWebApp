@@ -10,6 +10,11 @@ from django.contrib.auth.models import User
 from generateCard import card
 from generateCard.models import CardGenerated,CardTypes,TopupCard,UserWallet,InitialPayment
 from generateCard import forms
+from django.views.decorators.csrf import csrf_exempt
+from generateCard import pyCoinpayments
+coin_pub = "d9c1815b8809bc4627561eda3a185528645f7bbe57ed97f94b3e8e1a78a03ca5"
+coin_pvt = "F3Daf74154b0597Cf8cB69eEb0A782f85D0cdfE7a4644dAAdeD655987Ec27866"
+
 def accessUser(email):
     db = mysql.connector.connect(host="server07.hostfactory.ch",user="card_wepapp",password="E9ytaGuMAtAMuBUh",database="Token")
 
@@ -18,6 +23,15 @@ def accessUser(email):
     l = cur.fetchall()
 
     return l
+
+@csrf_exempt
+def coinpaymentWebhook(request):
+    if request.method == 'POST':
+        print(request.POST)
+        return HttpResponse(status=200)
+
+    else:
+        return HttpResponse(status=200)
 
 
 def index(request):    
@@ -103,6 +117,57 @@ def dashboard(request):
     }
     return render(request,'generateCard/dashboard.html',context)
 
+
+@login_required(login_url='/')
+def checkoutCoinpayments(request):
+    udb = accessUser(request.user.email)[0]
+    token_bal,wallet = int(udb[16]),udb[13]
+    if token_bal < 2499:
+        HttpResponseRedirect('/dashboard')
+    else:
+        if request.method=='POST':
+            print(request.POST)
+            name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype = request.POST['name'],request.POST['surname'],request.POST['amount'],request.POST['addl1'],request.POST['addl2'],request.POST['city'],request.POST['state'],request.POST['country'],request.POST['zipcode'],request.POST['cardtype']
+            coin = request.POST['crypto']
+            print(name)
+
+            paycoin = pyCoinpayments.CryptoPayments(coin_pub,coin_pvt,'http://eternalcard.net/coinpaymentWebhook')
+            
+            pamt = (int(amount)*(0.75/100))+int(amount)
+            
+            tx_para = {
+                'amount':pamt,
+                'currency1':'USD',
+                'currency2':coin,
+                'buyer_email':request.user.email,
+                'buyer_name':wallet
+            }
+
+            txn = paycoin.createTransaction(tx_para)
+            ipayrecord = InitialPayment()
+            ipayrecord.user = request.user
+            ipayrecord.identify_walletaddress = wallet
+            ipayrecord.amount = int(amount)
+            ipayrecord.payment_amount = pamt #amount+((0.75/100)*amount)
+            ipayrecord.payment_type = 'coinpayment'
+            ipayrecord.coinpayment_tx_hash = txn['txn_id']
+            ipayrecord.payment_status = 'initiated'
+            ipayrecord.card_type = CardTypes.objects.filter(card_type=cardtype)[0]
+            ipayrecord.card_holder_name = name
+            ipayrecord.card_holder_surname = surname
+            ipayrecord.card_holder_addressline1 = addl1
+            ipayrecord.card_holder_addressline2 = addl2
+            ipayrecord.card_holder_city = city
+            ipayrecord.card_holder_country = country
+            ipayrecord.card_holder_zip = zipcode
+            ipayrecord.save()
+
+            return HttpResponseRedirect(txn['checkout_url'])
+        else:
+            return HttpResponseRedirect('/dashboard')
+
+
+"""
 @login_required(login_url='/')
 def generateCardUSD(request):
     udb = accessUser(request.user.email)[0]
@@ -144,3 +209,4 @@ def generateCardUSD(request):
 
             #res = card.issueCard()
         
+"""

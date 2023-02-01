@@ -19,7 +19,8 @@
                 <a href="{% url 'logout' %}"><span class="material-symbols-outlined" style="margin-right:10px;">preliminary</span>Log out</a>
             </div>
             <div class="header">
-                <h1>Welcome</h1>
+                <img src="{% static 'generateCard/images/elt.png' %}" class="elt-logo"/>
+                <h1>New Enternal Life</h1>
             </div>
             <div class="content">
                 <div class="slides">
@@ -31,11 +32,11 @@
                     </div>
                     <div class="userDetails gap">
                         <div class="ucard">
-                            <span>Token Balance</span>
+                            <span>Token balance</span>
                             <h3>{{ tokenBalance }} ETL</h3>
                         </div>
                         <div class="ucard">
-                            <span>Wallet Address</span>
+                            <span>Wallet address</span>
                             <h3>{{ wallet }}</h3>
                         </div>
                         <div class="ucard">
@@ -63,10 +64,25 @@
                     </div>
                     {% endif %}
                     {% if card_status %}
-                    <div class="debitcardContainer">
+                    <div class="debitcardContainer gap">
                         {% for cards in cardgenerated %}
                         <div class="debitcardBox">
-                            <div class="debitcards"></div> 
+                            <div class="debitcards">
+                                <div class="printCard">
+                                    <div class="userDetails"><div class="ucard"><span>{{ cards.card_number }}</span></div></div>
+                                    
+                                    <div class="userDetails">
+                                        <div class="ucard">
+                                            <span>Expiry</span>
+                                            <h3>{{ cards.card_expiry_month }}/ {{ cards.card_expiry_year }}</h3>
+                                        </div>
+                                        <div class="ucard">
+                                            <span>CVV</span>
+                                            <h3>{{ cards.card_cvv }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
                             <div class="userDetails">
                                     <div class="ucard">
                                         <span>Card No.</span>
@@ -103,11 +119,11 @@
         <div id="myModal" class="modal">
         <!-- Modal content -->
             <div class="modal-content">
-                <form class="form-css" name = "cgenform" action="{% url 'generateUSD'%}" method="POST" onsubmit="return validateForm()">
+                <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" method="POST" onsubmit="return validateForm()">
                     {% csrf_token %}
                     {{ cform.as_table }}
                     <br/>
-                    <input type="submit" class="cardfunctions" value="Generate Virtual Debit Card">
+                    <input type="submit" class="cardfunctions" value="Checkout">
                 </form>
                 <span class="close gap">&times;</span>
             </div>

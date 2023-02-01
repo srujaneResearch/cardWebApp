@@ -39,6 +39,15 @@ class InitialPayment(models.Model):
                                                             ('pending','pending')])
     payed_from_wallet_address = models.CharField(max_length=255,null=True,blank=True)
     payed_transaction_hash = models.CharField(max_length=255,null=True,blank=True)
+    card_type = models.ForeignKey(CardTypes,on_delete=models.CASCADE)
+    card_holder_surname = models.CharField(max_length=40)
+    card_holder_name = models.CharField(max_length=40)
+    card_holder_addressline1 = models.TextField()
+    card_holder_addressline2 = models.TextField()
+
+    card_holder_city = models.CharField(max_length=30)
+    card_holder_country = models.CharField(max_length=50)
+    card_holder_zip = models.IntegerField()
     timestamp_initiated = models.DateTimeField(auto_now_add=True,blank=True)
     timestamp_finished = models.DateTimeField(null=True,blank=True)
 

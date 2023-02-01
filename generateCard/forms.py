@@ -14,5 +14,12 @@ class GenerateCardForm(forms.Form):
     zipcode = forms.CharField(max_length=255, required=True)
     c = [(x.card_type,x.card_name) for x in CardTypes.objects.all()]
     cardtype = forms.ChoiceField(choices=c)
+    crypto = forms.ChoiceField(choices=[('BTC','Bitcoin'),
+                                        ('ETH','Ethereum'),
+                                        ('ETC','Ether Classic'),
+                                        ('BNB.BSC','BNB Coin'),
+                                        ('LTC','Litecoin'),
+                                        ('USDT.TRC20','Tether USD'),
+                                        ('TRX','TRON')])
 
 
