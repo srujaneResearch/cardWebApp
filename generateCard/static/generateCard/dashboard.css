@@ -172,8 +172,13 @@
         align-items:center;
         font-size: 14px;
         margin: 5px;
+        justify-content: space-between;
     }
 
+    .cheader-wrap{
+        display: flex;
+        flex-direction: row;
+    }
     .cheaders .itm{
         margin: 5px;
     }

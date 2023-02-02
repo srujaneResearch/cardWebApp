@@ -28,13 +28,19 @@ def accessUser(email):
 def coinpaymentWebhook(request):
     if request.method == 'POST':
         print(request.POST)
+        print(request.body,'\n')
+        print(request)
+        print(request.META)
+        print(request.headers)
         return HttpResponse(status=200)
 
     else:
         return HttpResponse(status=200)
 
 
-def index(request):    
+def index(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/dashboard')    
     return render(request, 'generateCard/login.html')
 
 def singup(request):
@@ -107,13 +113,23 @@ def dashboard(request):
     print(cards_generated)
     token_balance,wallet,emailaddr = int(udb[16]),udb[13],udb[2]
     #card_status=False
+    if card_status:
+        balance = 0
+        for _ in cards_generated:
+            balance+=_.card_balance
+    else:
+        balance = 0
+
+
+
     context = {'tokenBalance':token_balance,
                 'wallet':wallet,
                 'emailaddress':emailaddr,
                 'cardTypes':c,
                 'card_status':card_status,
                 "cardgenerated":cards_generated,
-                "cform":cform
+                "cform":cform,
+                "cbalance":balance,
     }
     return render(request,'generateCard/dashboard.html',context)
 
@@ -166,6 +182,22 @@ def checkoutCoinpayments(request):
         else:
             return HttpResponseRedirect('/dashboard')
 
+@login_required(login_url='/')
+def getCardBalance(request,card_no):
+    if request.user.is_authenticated:
+        gt_card = CardGenerated.objects.get(card_holder_user=request.user,card_number=card_no)
+        res = card.getBalance(card_no)
+        print(res)
+        if res['success']:
+            balance = res['data']['balance']
+            gt_card.card_balance = balance
+            gt_card.save()
+            return HttpResponseRedirect('/dashboard')
+        else:
+            return HttpResponseRedirect('/dashboard')
+    else:
+        return HttpResponseRedirect('/')
+            
 
 """
 @login_required(login_url='/')

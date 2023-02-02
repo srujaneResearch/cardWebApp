@@ -28,7 +28,11 @@
                         <div class="cheaders">
                             <h3 class="itm">Total Balance</h3><span class="material-symbols-outlined itm">Account_Balance_Wallet</span>
                         </div>
-                        <h1 id="tbalance">320000000 USD</h1>
+                        {% if card_status %}
+                        <h1 id="tbalance">{{ cbalance }} USD</h1>
+                        {% else %}
+                        <h1 id="tbalance">NA</h1>
+                        {% endif %}
                     </div>
                     <div class="userDetails gap">
                         <div class="ucard">
@@ -47,20 +51,23 @@
                 </div>
                 <div class="slides">
                     <div class="cheaders gap">
-                        <h3 class="itm">Your Cards</h3><span class="material-symbols-outlined itm">Credit_Card</span>
+                        <div class="cheader-wrap">
+                            <h3 class="itm">Your Cards</h3><span class="material-symbols-outlined itm">Credit_Card</span>
+                        </div>
+                        {% if tokenBalance > 2499 %}
+                        <div class="cheader-wrap">
+                            <div class="debitcardBox gap">
+                                <a href="#" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Attach_Money</span>Generate USD</a>
+                            </div>
+                            <div class="debitcardBox gap">
+                                <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Euro_Symbol</span>Generate EUR</a>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     {% if tokenBalance < 2499 %}
                     <div class="debitcardContainer redalert">
                         <span>you need more then 2499 Tokens to use the cardfunction</span>
-                    </div>
-                    {% else %}
-                    <div class="debitcardContainer">
-                        <div class="debitcardBox gap">
-                            <a href="#" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Attach_Money</span>Generate USD</a>
-                        </div>
-                        <div class="debitcardBox gap">
-                            <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Euro_Symbol</span>Generate EUR</a>
-                        </div>
                     </div>
                     {% endif %}
                     {% if card_status %}
@@ -99,7 +106,7 @@
                             </div>
                             <div class="userDetails">
                                 <div class="ucard">
-                                    <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Account_Balance_Wallet</span>Balance</a>
+                                    <a href="{% url 'cardbalance' cards.card_number %}" class="cardfunctions"><span class="material-symbols-outlined">Account_Balance_Wallet</span>Balance</a>
                                     <span>{{ cards.card_balance }} USD</span>
                                 </div>
                                 <div class="ucard">

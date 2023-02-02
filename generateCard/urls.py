@@ -7,6 +7,7 @@ urlpatterns=[
     path('register',views.register,name='register'),
     path('logout',views.logoutAuth,name='logout'),
     path('dashboard',views.dashboard,name='dashboard'),
+    path('checkCardBalance/<int:card_no>',views.getCardBalance,name='cardbalance'),
     path('checkoutCoinpayment',views.checkoutCoinpayments,name='checkout'),
     #path('generateCardUSD',views.generateCardUSD,name="generateUSD"),
     path('coinpaymentWebhook',views.coinpaymentWebhook,name='coinpaymentWebhook')
