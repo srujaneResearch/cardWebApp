@@ -36,7 +36,6 @@ def coinpaymentWebhook(request):
         print(request.headers['HTTP_HMAC'])
         import hmac
         import hashlib
-        import 
         encoded_ = urlencode(request).encode('utf-8')
         hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
         print("our hmac",hashcode)
