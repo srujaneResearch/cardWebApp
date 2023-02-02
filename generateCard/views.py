@@ -28,17 +28,19 @@ def accessUser(email):
 @csrf_exempt
 def coinpaymentWebhook(request):
     if request.method == 'POST':
+        import hmac
+        import hashlib
+        encoded_ = urlencode(request).encode('utf-8')
+        hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
+        print("our hmac",hashcode)
         print(request.POST)
         #print(request.body,'\n')
         #print(request)
         #print(request.META)
         print(request.headers)
         print(request.headers['Hmac'])
-        import hmac
-        import hashlib
-        encoded_ = urlencode(request).encode('utf-8')
-        hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
-        print("our hmac",hashcode)
+
+        
         return HttpResponse(status=200)
 
     else:
