@@ -30,16 +30,16 @@ def coinpaymentWebhook(request):
     if request.method == 'POST':
         import hmac
         import hashlib
-        encoded_ = urlencode(request).encode('utf-8')
-        hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
-        print("our hmac",hashcode)
-        print(request.POST)
+        print("this is requet", request)
+        #print(request.POST)
         #print(request.body,'\n')
         #print(request)
         #print(request.META)
         print(request.headers)
         print(request.headers['Hmac'])
-
+        encoded_ = urlencode(request.POST).encode('utf-8')
+        hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
+        print("our hmac",hashcode)
         
         return HttpResponse(status=200)
 
