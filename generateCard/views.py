@@ -33,7 +33,7 @@ def coinpaymentWebhook(request):
         #print(request)
         #print(request.META)
         print(request.headers)
-        print(request.headers['HTTP_HMAC'])
+        print(request.headers['Hmac'])
         import hmac
         import hashlib
         encoded_ = urlencode(request).encode('utf-8')
