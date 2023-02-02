@@ -223,7 +223,7 @@ def checkoutCoinpayments(request):
     else:
         if request.method=='POST':
             print(request.POST)
-            name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype = request.POST['name'],request.POST['surname'],request.POST['amount'],request.POST['addl1'],request.POST['addl2'],request.POST['city'],request.POST['state'],request.POST['country'],request.POST['zipcode'],request.POST['cardtype']
+            name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype = request.POST['name'],request.POST['surname'],request.POST['amount'],request.POST['addl1'],'---',request.POST['city'],request.POST['state'],request.POST['country'],request.POST['zipcode'],request.POST['cardtype']
             coin = request.POST['crypto']
             print(name)
 
