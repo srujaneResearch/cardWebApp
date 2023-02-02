@@ -29,13 +29,6 @@
     }
 
     
-
-    a:hover{
-        background-color: rgb(230, 243, 255);
-        color: rgb(0, 119, 230);
-        font-weight: bold;
-    }
-
     .container{
         display: grid;
         
@@ -53,12 +46,42 @@
     .sidebar{
         border: 1px solid rgb(242, 242, 242);
         grid-area: sb;
-        background-color: rgb(255, 255, 255);
+        background-color: black;
         display: flex;
         flex-direction: column;
         align-items: left;
         padding: 10px;
         font-family: 'Noto Sans', sans-serif;
+        color: white;
+    }
+    .sidebar h3{
+        margin: 0;
+        padding: 10px;
+        background-color: darkolivegreen;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    .sidebar a{
+        padding: 5px;
+        display: flex;
+        flex-direction: row;
+        justify-content: last baseline;
+        align-items: left;
+        text-decoration: none;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        align-items: center;
+
+    }
+    .sidebar a:hover{
+        border-left: 5px solid darkolivegreen;
+    }
+
+
+    .active{
+        border-left: 5px solid darkolivegreen;
     }
     .header{
         border: 1px solid rgb(242, 242, 242);
@@ -118,7 +141,9 @@
     }
 
     .ucard span{
-        color: grey;
+        color: #808080;
+        font-weight: bold;
+        font-size: 12px;
 
     }
 
@@ -127,12 +152,25 @@
     }
     .debitcardContainer{
         display: flex;
+        flex-direction: column;
+    }
+
+    .debitcardBox{
+        display: flex;
         flex-direction: row;
     }
 
-    .dcardBox{
+    .debitCardDetail-wraper{
         display: flex;
+        
+        padding: 10px;
+        padding-left: 100px;
         flex-direction: column;
+        margin-left: 20px;
+        border-bottom-right-radius: 20px;
+        border-top-right-radius: 20px;
+        background-color: rgb(245,245,245);
+        justify-content: center;
     }
 
 
@@ -185,17 +223,22 @@
 
     .cardfunctions{
         padding: 8px;
-        border: 1px solid rgb(102, 102, 102);
+
         color: black;
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 0.3px;
         align-items: center;
         background-color: none;
     }
 
     .cardfunctions span{
         margin-right: 5px;
-        font-size: 16px;
         
+    }
+    .gen{
+        border: 1px solid rgb(102, 102, 102);
+        border-radius: 20px;
     }
     .modal {
         display: none; /* Hidden by default */
