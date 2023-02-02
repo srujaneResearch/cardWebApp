@@ -20,6 +20,8 @@ class GenerateCardForm(forms.Form):
                                         ('BNB.BSC','BNB Coin'),
                                         ('LTC','Litecoin'),
                                         ('USDT.TRC20','Tether USD'),
-                                        ('TRX','TRON')])
+                                        ('TRX','TRON'),
+                                        ('LTCT','Litecoin Test')
+                                        ])
 
 
