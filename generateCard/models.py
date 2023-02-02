@@ -46,6 +46,7 @@ class InitialPayment(models.Model):
     card_holder_addressline2 = models.TextField()
 
     card_holder_city = models.CharField(max_length=30)
+    card_holder_state = models.CharField(max_length=30)
     card_holder_country = models.CharField(max_length=50)
     card_holder_zip = models.IntegerField()
     timestamp_initiated = models.DateTimeField(auto_now_add=True,blank=True)
@@ -61,6 +62,7 @@ class CardGenerated(models.Model):
     card_holder_addressline2 = models.TextField()
 
     card_holder_city = models.CharField(max_length=30)
+    card_holder_state = models.CharField(max_length=30)
     card_holder_country = models.CharField(max_length=50)
     card_holder_zip = models.IntegerField()
     card_number = models.BigIntegerField()

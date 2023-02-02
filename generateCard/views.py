@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
+from django.http.response import HttpResponseBadRequest
 from django.utils.http import urlencode
 # Create your views here.
 from django.template import loader
@@ -13,6 +14,7 @@ from generateCard.models import CardGenerated,CardTypes,TopupCard,UserWallet,Ini
 from generateCard import forms
 from django.views.decorators.csrf import csrf_exempt
 from generateCard import pyCoinpayments
+from datetime import datetime
 coin_pub = "d9c1815b8809bc4627561eda3a185528645f7bbe57ed97f94b3e8e1a78a03ca5"
 coin_pvt = "F3Daf74154b0597Cf8cB69eEb0A782f85D0cdfE7a4644dAAdeD655987Ec27866"
 
@@ -37,23 +39,80 @@ def coinpaymentWebhook(request):
         #print(request.META)
         print(request.headers)
         print(request.headers['Hmac'])
-        encoded_ = urlencode(request.POST).encode('utf-8')
-        hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
-        print("our hmac",hashcode)
-        encoded_ = urlencode(request.POST).encode('utf-8')
-        hashcode = hmac.new(bytearray('56464893516546435156446540', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
-        print("our hmac old",hashcode)
         encoded_ = request.body
         hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
         print("our hmac body",hashcode)
-        encoded_ = request.body
-        hashcode = hmac.new(bytearray('56464893516546435156446540', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
-        print("our hmac body old",hashcode)
-        return HttpResponse(status=200)
 
+
+        if 'Hmac' in request.headers.keys():
+            if hashcode == request.headers['Hmac']:
+                txn_id = request.POST['txn_id']
+                tx_status = int(request.POST['status'])
+                ipay = InitialPayment.objects.get(coinpayment_tx_hash=txn_id)
+                
+                if ipay.payment_status == 'rejected' or ipay.payment_status == 'successful':
+                    return HttpResponse(status=200)
+                
+                else:
+                    #check payment status
+                    if tx_status == 100:
+
+                        name,surname = ipay.card_holder_name,ipay.card_holder_surname
+                        amount,addl1 = ipay.amount,ipay.card_holder_addressline1
+                        addl2,city = ipay.card_holder_addressline2,ipay.card_holder_city
+                        state,country = ipay.card_holder_state,ipay.card_holder_country
+                        zipcode,cardtype = ipay.card_holder_zip,ipay.card_type
+                        res = card.issueCard(name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype)
+                        print(res)
+                        if res['success']:
+                            card_number,card_exm,card_exy,card_cvv,balance = int(res['message']['card_info']['card_number']),int(res['message']['card_info']['card_exp_mth']),int(res['message']['card_info']['card_exp_year']),int(res['message']['card_info']['card_cvv']),res['message']['card_balance']['balance']
+
+                            ct = CardTypes.objects.filter(card_type=cardtype)[0]
+                            c = CardGenerated()
+                            c.card_type = ct
+                            c.card_holder_user = ipay.user
+                            c.card_number = card_number
+                            c.identify_walletaddress = ipay.identify_walletaddress
+                            c.card_holder_name = name
+                            c.card_holder_surname = surname
+                            c.card_expiry_month = card_exm
+                            c.card_expiry_year = card_exy
+                            c.card_cvv = card_cvv
+                            c.card_holder_addressline1 = addl1
+                            c.card_holder_addressline2 = addl2
+                            c.card_holder_city = city
+                            c.card_holder_country = country
+                            c.card_holder_zip = zipcode
+                            c.initial_payment_id = InitialPayment.objects.all()[0]
+                            c.save()
+                            ipay.payment_status = 'successful'
+                            ipay.timestamp_finished = datetime.now()
+                            ipay.save()
+                            return HttpResponse(status=200)
+                        else:
+                            print("API Fails")
+
+                            return HttpResponse(status=200)
+                    
+                    elif tx_status < 0:
+                        ipay.payment_status = "rejected"
+                        ipay.timestamp_finished = datetime.now()
+                        ipay.save()
+                        return HttpResponse(status=200)
+                    elif tx_status == 1:
+                        ipay.payment_status = "approved"
+                        ipay.save()
+                        return HttpResponse(status=200)
+                    else:
+                        ipay.payment_status = "pending"
+                        ipay.save()
+                        return HttpResponse(status=200)
+            else:
+                return HttpResponseBadRequest('BAD Request HMAC')
+        else:
+            return HttpResponseBadRequest('BAD Request HMAC')
     else:
         return HttpResponse(status=200)
-
 
 def index(request):
     if request.user.is_authenticated:
@@ -191,6 +250,7 @@ def checkoutCoinpayments(request):
             ipayrecord.card_holder_addressline1 = addl1
             ipayrecord.card_holder_addressline2 = addl2
             ipayrecord.card_holder_city = city
+            ipayrecord.card_holder_state = state
             ipayrecord.card_holder_country = country
             ipayrecord.card_holder_zip = zipcode
             ipayrecord.save()
@@ -214,48 +274,3 @@ def getCardBalance(request,card_no):
             return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponseRedirect('/')
-            
-
-"""
-@login_required(login_url='/')
-def generateCardUSD(request):
-    udb = accessUser(request.user.email)[0]
-    token_bal,wallet = int(udb[16]),udb[13]
-    if token_bal < 2499:
-        HttpResponseRedirect('/dashboard')
-    else:
-        if request.method=='POST':
-            print(request.POST)
-            name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype = request.POST['name'],request.POST['surname'],request.POST['amount'],request.POST['addl1'],request.POST['addl2'],request.POST['city'],request.POST['state'],request.POST['country'],request.POST['zipcode'],request.POST['cardtype']
-            print(name)
-            res = card.issueCard(name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype)
-            print(res)
-            if res['success']:
-                card_number,card_exm,card_exy,card_cvv,balance = int(res['message']['card_info']['card_number']),int(res['message']['card_info']['card_exp_mth']),int(res['message']['card_info']['card_exp_year']),int(res['message']['card_info']['card_cvv']),res['message']['card_balance']['balance']
-                ct = CardTypes.objects.filter(card_type=cardtype)[0]
-                c = CardGenerated()
-                c.card_type = ct
-                c.card_holder_user = request.user
-                c.card_number = card_number
-                c.identify_walletaddress = wallet
-                c.card_holder_name = name
-                c.card_holder_surname = surname
-                c.card_expiry_month = card_exm
-                c.card_expiry_year = card_exy
-                c.card_cvv = card_cvv
-                c.card_holder_addressline1 = addl1
-                c.card_holder_addressline2 = addl2
-                c.card_holder_city = city
-                c.card_holder_country = country
-                c.card_holder_zip = zipcode
-                c.initial_payment_id = InitialPayment.objects.all()[0]
-                c.save()
-                return HttpResponseRedirect('/dashboard')
-            else:
-                return HttpResponseRedirect('/dashboard')
-        else:
-            return HttpResponseRedirect('/dashboard')
-
-            #res = card.issueCard()
-        
-"""
