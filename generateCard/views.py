@@ -48,7 +48,11 @@ def coinpaymentWebhook(request):
             if hashcode == request.headers['Hmac']:
                 txn_id = request.POST['txn_id']
                 tx_status = int(request.POST['status'])
-                ipay = InitialPayment.objects.get(coinpayment_tx_hash=txn_id)
+                try:
+                    ipay = InitialPayment.objects.get(coinpayment_tx_hash=txn_id)
+                except:
+                    print("no tx found")
+                    return HttpResponseBadRequest("tx not found", txn_id)
                 
                 if ipay.payment_status == 'rejected' or ipay.payment_status == 'successful':
                     return HttpResponse(status=200)
@@ -61,7 +65,7 @@ def coinpaymentWebhook(request):
                         amount,addl1 = ipay.amount,ipay.card_holder_addressline1
                         addl2,city = ipay.card_holder_addressline2,ipay.card_holder_city
                         state,country = ipay.card_holder_state,ipay.card_holder_country
-                        zipcode,cardtype = ipay.card_holder_zip,ipay.card_type
+                        zipcode,cardtype = ipay.card_holder_zip,ipay.card_type.card_type
                         res = card.issueCard(name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype)
                         print(res)
                         if res['success']:
