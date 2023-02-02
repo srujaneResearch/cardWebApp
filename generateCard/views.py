@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
+from django.utils.http import urlencode
 # Create your views here.
 from django.template import loader
 from django.contrib.auth import authenticate,login,logout
@@ -28,10 +29,17 @@ def accessUser(email):
 def coinpaymentWebhook(request):
     if request.method == 'POST':
         print(request.POST)
-        print(request.body,'\n')
-        print(request)
-        print(request.META)
+        #print(request.body,'\n')
+        #print(request)
+        #print(request.META)
         print(request.headers)
+        print(request.headers['HTTP_HMAC'])
+        import hmac
+        import hashlib
+        import 
+        encoded_ = urlencode(request).encode('utf-8')
+        hashcode = hmac.new(bytearray('Soul1234', 'utf-8'), encoded_, hashlib.sha512).hexdigest()
+        print("our hmac",hashcode)
         return HttpResponse(status=200)
 
     else:
