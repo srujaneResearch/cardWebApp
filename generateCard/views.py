@@ -275,6 +275,7 @@ def getCardBalance(request,card_no):
             gt_card.save()
             return HttpResponseRedirect('/dashboard')
         else:
+            print("Balance API Error")
             return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponseRedirect('/')
