@@ -73,8 +73,9 @@
                         {% endif %}
                     </div>
                     {% if tokenBalance < 2499 %}
-                    <div class="debitcardContainer redalert">
-                        <span>you need more then 2499 Tokens to use the cardfunction</span>
+                    <div class="token-alert">
+                        <span>You need more than 2499 ETL to use the card function!</span>
+                        <a href="https://eternallifetoken.net/public/login">Buy Here</a>
                     </div>
                     {% endif %}
                     {% if card_status %}
@@ -124,7 +125,7 @@
 
                                     </div>
                                     <div class="ucard">
-                                        <a href="#" class="cardfunctions gen"><span class="material-symbols-outlined">Receipt_Long</span>Transactions</a>
+                                        <a id="transaction" c_num="{{ cards.card_number }}" class="cardfunctions gen"><span class="material-symbols-outlined">Receipt_Long</span>Transactions</a>
 
                                     </div>                                    
                                 </div>
@@ -141,6 +142,9 @@
         <div id="myModal" class="modal">
         <!-- Modal content -->
             <div class="modal-content">
+                <div class="modal-cover">
+
+                </div>
                 <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" method="POST" onsubmit="return validateForm()">
                     {% csrf_token %}
                     {{ cform.as_table }}
@@ -150,6 +154,12 @@
                 <span class="close gap">&times;</span>
             </div>
         </div>
+        <div id="tModal" class="modal">
+            <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close gap">&times;</span>
+                </div>
+            </div>
 <script>
 // Get the modal
 var modal = document.getElementById("myModal");
@@ -187,7 +197,25 @@ function validateForm() {
   }
 }
 </script>
+<!--
+<script>
+
+    let tx_btn = document.getElementById('transaction')
 
 
+    console.log(tx_btn)
+    let req = new XMLHttpRequest();
+    req.open("GET",'/transactionlog/5183752230032793');
+    req.send();
+    if(req.status == 200){
+        console.log(req.response);
+    }
+    else
+    {
+        console.log(req);
+    }
+    
+</script>
+-->
     </body>
 </html>

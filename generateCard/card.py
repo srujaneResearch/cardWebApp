@@ -43,3 +43,12 @@ def topUpCard(amount,card_no):
     r = requests.post(base_url+"/cards/load-virtual-card",data=payload,headers=headers)
     return r.json()
 
+def transactions(card_no):
+    payload={
+        "card_number": card_no,
+    }
+    headers={"Authorization":"Bearer "+api_key}
+    r = requests.post(base_url+"/cards/get-card-transactions",data=payload,headers=headers)
+    return r.json()
+
+

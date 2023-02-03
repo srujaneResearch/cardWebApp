@@ -1,6 +1,6 @@
 
 from django.shortcuts import render
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from django.http.response import HttpResponseBadRequest
 from django.utils.http import urlencode
 # Create your views here.
@@ -88,6 +88,7 @@ def coinpaymentWebhook(request):
                             c.card_holder_country = country
                             c.card_holder_zip = zipcode
                             c.initial_payment_id = InitialPayment.objects.all()[0]
+                            c.card_balance = balance
                             c.save()
                             ipay.payment_status = 'successful'
                             ipay.timestamp_finished = datetime.now()
@@ -279,3 +280,18 @@ def getCardBalance(request,card_no):
             return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponseRedirect('/')
+
+@login_required(login_url='/')
+def getTransactionLog(request,card_no):
+    if request.user.is_authenticated:
+        res = card.transactions(card_no)
+        print(res)
+        if res['success']:
+            return JsonResponse(res)
+        else:
+            print("Balance API Error")
+            return HttpResponseBadRequest("API Error")
+    else:
+        return HttpResponseBadRequest("User Not Authenticated.")
+
+

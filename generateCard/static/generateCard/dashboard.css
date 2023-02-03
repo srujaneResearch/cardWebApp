@@ -167,8 +167,7 @@
         padding-left: 100px;
         flex-direction: column;
         margin-left: 20px;
-        border-bottom-right-radius: 20px;
-        border-top-right-radius: 20px;
+        border-radius: 20px;
         background-color: rgb(245,245,245);
         justify-content: center;
     }
@@ -266,6 +265,12 @@
         display: flex;
         }
 
+        .modal-cover{
+            background-color: lavender;
+            width: 300px;
+            height: 100px;
+        }
+
         /* The Close Button */
         .close {
         color: #aaaaaa;
@@ -292,20 +297,27 @@
             padding: 5px;
             background-color: none;
             outline: 0;
+            border-radius: 5px;
+            border: 1px solid lavender;
+
 
         }
 
         .form-css select{
             padding: 5px;
             background-color: white;
+            border-radius: 5px;
+            border: 1px solid lavender;        
         }
 
         .form-css option{
             font-family: 'Noto Sans', sans-serif;
+    
         }
 
         .form-css lable{
             font-family: 'Noto Sans', sans-serif;
+            font-size: 12px;
         }
 
         .form-css textarea{
@@ -315,6 +327,27 @@
         .elt-logo{
             width: 50px;
             height: 50px;
+        }
+
+        .token-alert{
+            background-color: lavender;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+
+        }
+        .token-alert a{
+            background-color: ghostwhite;
+            border-radius: 20px;
+            padding: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            color: blue;
         }
 
 </style>
