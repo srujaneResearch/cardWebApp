@@ -121,7 +121,7 @@
                                         <span>{{ cards.card_balance }} USD</span>
                                     </div>
                                     <div class="ucard">
-                                        <a href="#" id="topup-btn" c_num="{{ cards.card_number }}" class="cardfunctions gen"><span class="material-symbols-outlined">Paid</span>Top up</a>
+                                        <a href="#" id="topup-btn" onclick="topUp(this)" c_num="{{ cards.card_number }}" class="cardfunctions gen"><span class="material-symbols-outlined">Paid</span>Top up</a>
 
                                     </div>
                                     <div class="ucard">
@@ -209,10 +209,26 @@ function validateForm() {
   }
 }
 
+
+function topUp(element){
+    console.log(element);
+    var tmodal = document.getElementById("topup-modal");
+    var tspan = document.getElementsByClassName("close")[0];
+    document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
+    
+    // When the user clicks the button, open the modal 
+    
+    tmodal.style.display = "flex";
+    
+    
+    // When the user clicks on <span> (x), close the modal
+
+}
+
 function validateTopupForm() {
   let x = document.forms['topupform']['Amount'].value;
   let tform = document.forms["topupform"];
-  let c_no = document.getElementById('transaction').attributes['c_num'].value;
+  let c_no = tform.attributes['c_num'].value;
   console.log(x);
   console.log(tform);
   console.log(c_no);
@@ -231,38 +247,21 @@ function validateTopupForm() {
 </script>
 
 <script>
-    // Get the modal
-    var tmodal = document.getElementById("topup-modal");
-    
-    // Get the button that opens the modal
-    var tbtn = document.getElementById("topup-btn");
-    console.log(tbtn)
-    
-    // Get the <span> element that closes the modal
-    var tspan = document.getElementsByClassName("close")[0];
-    
-    // When the user clicks the button, open the modal 
-    tbtn.onclick = function() {
-      tmodal.style.display = "flex";
-    }
-    
-    // When the user clicks on <span> (x), close the modal
-    tspan.onclick = function() {
-      tmodal.style.display = "none";
-    }
-    
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
         console.log(event);
         console.log(event.target);
         console.log(event.target==modal);
-      if (event.target == tmodal) {
-        tmodal.style.display = "none";
-      }
-
-      if (event.target == modal){
-        console.log("I executed");
-        modal.style.display = "none";
+        console.log(event.target.attributes['class'].value);
+      if (event.target.attributes['class'].value == 'modal' || event.target.attributes['class'].value=='close gap') {
+            if (document.getElementById('myModal').style.display == 'flex'){
+                document.getElementById('myModal').style.display ='none';
+            }
+            if(document.getElementById('topup-modal').style.display == 'flex'){
+                document.getElementById('topup-modal').style.display = 'none';
+            } 
+        
+        //event.target.style.display = "none";
       }
     }
     </script>
