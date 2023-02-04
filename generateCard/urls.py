@@ -9,6 +9,7 @@ urlpatterns=[
     path('dashboard',views.dashboard,name='dashboard'),
     path('checkCardBalance/<int:card_no>',views.getCardBalance,name='cardbalance'),
     path('checkoutCoinpayment',views.checkoutCoinpayments,name='checkout'),
+    path('topup/<int:card_no>',views.topupCard,name='topup'),
     path('transactionlog/<int:card_no>',views.getTransactionLog,name='transaction'),
     path('coinpaymentWebhook',views.coinpaymentWebhook,name='coinpaymentWebhook')
     ]

@@ -121,7 +121,7 @@
                                         <span>{{ cards.card_balance }} USD</span>
                                     </div>
                                     <div class="ucard">
-                                        <a href="#" class="cardfunctions gen"><span class="material-symbols-outlined">Paid</span>Top up</a>
+                                        <a href="#" id="topup-btn" c_num="{{ cards.card_number }}" class="cardfunctions gen"><span class="material-symbols-outlined">Paid</span>Top up</a>
 
                                     </div>
                                     <div class="ucard">
@@ -143,6 +143,7 @@
         <!-- Modal content -->
             <div class="modal-content">
                 <div class="modal-cover">
+                    <img src="{% static 'generateCard/images/elt.png' %}"/>
 
                 </div>
                 <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" method="POST" onsubmit="return validateForm()">
@@ -159,7 +160,20 @@
                 <div class="modal-content">
                     <span class="close gap">&times;</span>
                 </div>
+        </div>
+
+        <div id="topup-modal" class="modal">
+                <!-- Modal content -->
+            <div class="modal-topup">
+                    <form class="form-css" name = "topupform"  method="POST" onsubmit="return validateTopupForm()">
+                        {% csrf_token %}
+                        {{ tform }}
+                        <br/>
+                        <input type="submit" class="cardfunctions" value="Checkout">
+                    </form>
+                    <span class="close gap">&times;</span>
             </div>
+        </div>
 <script>
 // Get the modal
 var modal = document.getElementById("myModal");
@@ -181,22 +195,80 @@ span.onclick = function() {
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
 
 function validateForm() {
   let x = document.forms["cgenform"]["amount"].value;
+  let c_no =  document.forms["cgenform"]
+  x = Number(x)
+  if (isNaN(x) || x <3 || x>5000) {
+    alert("Amount must be greater than 50 and less than 5000");
+    return false;
+  }
+  else{
+    
+  }
+}
+
+function validateTopupForm() {
+  let x = document.forms['topupform']['Amount'].value;
+  let tform = document.forms["topupform"];
+  let c_no = document.getElementById('transaction').attributes['c_num'].value;
+  console.log(x);
+  console.log(tform);
+  console.log(c_no);
   
   x = Number(x)
   if (isNaN(x) || x <3 || x>5000) {
     alert("Amount must be greater than 50 and less than 5000");
     return false;
   }
+  else{
+    tform.action = '/topup/'+c_no;
+    return true;
+  }
 }
+
 </script>
+
+<script>
+    // Get the modal
+    var tmodal = document.getElementById("topup-modal");
+    
+    // Get the button that opens the modal
+    var tbtn = document.getElementById("topup-btn");
+    console.log(tbtn)
+    
+    // Get the <span> element that closes the modal
+    var tspan = document.getElementsByClassName("close")[0];
+    
+    // When the user clicks the button, open the modal 
+    tbtn.onclick = function() {
+      tmodal.style.display = "flex";
+    }
+    
+    // When the user clicks on <span> (x), close the modal
+    tspan.onclick = function() {
+      tmodal.style.display = "none";
+    }
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        console.log(event);
+        console.log(event.target);
+        console.log(event.target==modal);
+      if (event.target == tmodal) {
+        tmodal.style.display = "none";
+      }
+
+      if (event.target == modal){
+        console.log("I executed");
+        modal.style.display = "none";
+      }
+    }
+    </script>
+
+
+
 <!--
 <script>
 

@@ -2,6 +2,20 @@ from django import forms
 from generateCard.models import CardTypes
 from django.core.validators import RegexValidator
 
+
+
+class TopupForm(forms.Form):
+    Amount = forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Min $50 Max- $5000'}))
+    crypto = forms.ChoiceField(choices=[('BTC','Bitcoin'),
+                                        ('ETH','Ethereum'),
+                                        ('ETC','Ether Classic'),
+                                        ('BNB.BSC','BNB Coin'),
+                                        ('LTC','Litecoin'),
+                                        ('USDT.TRC20','Tether USD'),
+                                        ('TRX','TRON'),
+                                        ('LTCT','Litecoin Test')
+                                        ])
+
 class GenerateCardForm(forms.Form):
     c = [(x.card_type,x.card_name) for x in CardTypes.objects.all()]
     cardtype = forms.ChoiceField(choices=c)

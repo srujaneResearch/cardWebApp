@@ -16,8 +16,8 @@ class CardTypes(models.Model):
     card_kyc = models.BooleanField()
 
 class UserWallet(models.Model):
-    user_wallet = models.CharField(max_length=255)
-    wallet_user = models.OneToOneField(User,on_delete=models.CASCADE)
+    wallet = models.CharField(max_length=255)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
 
 class InitialPayment(models.Model):
     #card_generated = models.ForeignKey(CardGenerated,on_delete=models.CASCADE)

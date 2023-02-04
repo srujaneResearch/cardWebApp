@@ -49,9 +49,12 @@ def coinpaymentWebhook(request):
                 txn_id = request.POST['txn_id']
                 tx_status = int(request.POST['status'])
                 try:
-                    ipay = InitialPayment.objects.get(coinpayment_tx_hash=txn_id)
+                    if request.POST['custom']=='top up':
+                        ipay = TopupCard.objects.get(coinpayment_tx_hash=txn_id)
+                    else:
+                        ipay = InitialPayment.objects.get(coinpayment_tx_hash=txn_id)
                 except:
-                    print("no tx found")
+                    print("no tx found",txn_id)
                     return HttpResponseBadRequest("tx not found", txn_id)
                 
                 if ipay.payment_status == 'rejected' or ipay.payment_status == 'successful':
@@ -61,43 +64,59 @@ def coinpaymentWebhook(request):
                     #check payment status
                     if tx_status == 100:
 
-                        name,surname = ipay.card_holder_name,ipay.card_holder_surname
-                        amount,addl1 = ipay.amount,ipay.card_holder_addressline1
-                        addl2,city = ipay.card_holder_addressline2,ipay.card_holder_city
-                        state,country = ipay.card_holder_state,ipay.card_holder_country
-                        zipcode,cardtype = ipay.card_holder_zip,ipay.card_type.card_type
-                        res = card.issueCard(name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype)
-                        print(res)
-                        if res['success']:
-                            card_number,card_exm,card_exy,card_cvv,balance = int(res['message']['card_info']['card_number']),int(res['message']['card_info']['card_exp_mth']),int(res['message']['card_info']['card_exp_year']),int(res['message']['card_info']['card_cvv']),res['message']['card_balance']['balance']
-
-                            ct = CardTypes.objects.filter(card_type=cardtype)[0]
-                            c = CardGenerated()
-                            c.card_type = ct
-                            c.card_holder_user = ipay.user
-                            c.card_number = card_number
-                            c.identify_walletaddress = ipay.identify_walletaddress
-                            c.card_holder_name = name
-                            c.card_holder_surname = surname
-                            c.card_expiry_month = card_exm
-                            c.card_expiry_year = card_exy
-                            c.card_cvv = card_cvv
-                            c.card_holder_addressline1 = addl1
-                            c.card_holder_addressline2 = addl2
-                            c.card_holder_city = city
-                            c.card_holder_country = country
-                            c.card_holder_zip = zipcode
-                            c.initial_payment_id = InitialPayment.objects.all()[0]
-                            c.card_balance = balance
-                            c.save()
-                            ipay.payment_status = 'successful'
-                            ipay.timestamp_finished = datetime.now()
-                            ipay.save()
-                            return HttpResponse(status=200)
+                        if request.POST['custom']=='top up':
+                            c_no = ipay.card.card_number
+                            c_instance = CardGenerated.objects.get(card_number=c_no)
+                            res = card.topUpCard(c_no)
+                            print(res)
+                            if res['success']:
+                                c_instance.card_balance = res['success']['data']['balance']
+                                c_instance.save()
+                                ipay.payment_status = 'successful'
+                                ipay.timestamp_finished = datetime.now()
+                                ipay.save()
+                            else:
+                                print("API Fails")
+                                return HttpResponse(status=200)
                         else:
-                            print("API Fails")
 
-                            return HttpResponse(status=200)
+                            name,surname = ipay.card_holder_name,ipay.card_holder_surname
+                            amount,addl1 = ipay.amount,ipay.card_holder_addressline1
+                            addl2,city = ipay.card_holder_addressline2,ipay.card_holder_city
+                            state,country = ipay.card_holder_state,ipay.card_holder_country
+                            zipcode,cardtype = ipay.card_holder_zip,ipay.card_type.card_type
+                            res = card.issueCard(name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype)
+                            print(res)
+                            if res['success']:
+                                card_number,card_exm,card_exy,card_cvv,balance = int(res['message']['card_info']['card_number']),int(res['message']['card_info']['card_exp_mth']),int(res['message']['card_info']['card_exp_year']),int(res['message']['card_info']['card_cvv']),res['message']['card_balance']['balance']
+
+                                ct = CardTypes.objects.filter(card_type=cardtype)[0]
+                                c = CardGenerated()
+                                c.card_type = ct
+                                c.card_holder_user = ipay.user
+                                c.card_number = card_number
+                                c.identify_walletaddress = ipay.identify_walletaddress
+                                c.card_holder_name = name
+                                c.card_holder_surname = surname
+                                c.card_expiry_month = card_exm
+                                c.card_expiry_year = card_exy
+                                c.card_cvv = card_cvv
+                                c.card_holder_addressline1 = addl1
+                                c.card_holder_addressline2 = addl2
+                                c.card_holder_city = city
+                                c.card_holder_country = country
+                                c.card_holder_zip = zipcode
+                                c.initial_payment_id = InitialPayment.objects.all()[0]
+                                c.card_balance = balance
+                                c.save()
+                                ipay.payment_status = 'successful'
+                                ipay.timestamp_finished = datetime.now()
+                                ipay.save()
+                                return HttpResponse(status=200)
+                            else:
+                                print("API Fails")
+
+                                return HttpResponse(status=200)
                     
                     elif tx_status < 0:
                         ipay.payment_status = "rejected"
@@ -190,6 +209,7 @@ def dashboard(request):
     else:
         card_status=True
     cform = forms.GenerateCardForm()
+    tform = forms.TopupForm()
     print(card_status)
     print(cards_generated)
     token_balance,wallet,emailaddr = int(udb[16]),udb[13],udb[2]
@@ -211,6 +231,7 @@ def dashboard(request):
                 "cardgenerated":cards_generated,
                 "cform":cform,
                 "cbalance":balance,
+                "tform":tform,
     }
     return render(request,'generateCard/dashboard.html',context)
 
@@ -237,7 +258,8 @@ def checkoutCoinpayments(request):
                 'currency1':'USD',
                 'currency2':coin,
                 'buyer_email':request.user.email,
-                'buyer_name':wallet
+                'buyer_name':wallet,
+                'custom':'initial payment'
             }
 
             txn = paycoin.createTransaction(tx_para)
@@ -280,6 +302,45 @@ def getCardBalance(request,card_no):
             return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponseRedirect('/')
+
+@login_required(login_url='/')
+def topupCard(request,card_no):
+    if request.user.is_authenticated:
+        wallet = UserWallet.objects.get(user=request.user)
+        gt_card = CardGenerated.objects.get(card_holder_user=request.user,card_number=card_no)
+        if request.method=='POST':
+            print(request.POST)
+            amount = request.POST['Amount']
+            coin = request.POST['crypto']
+            paycoin = pyCoinpayments.CryptoPayments(coin_pub,coin_pvt,'http://eternalcard.net/coinpaymentWebhook')            
+            pamt = (int(amount)*(0.75/100))+int(amount)
+            tx_para = {
+                'amount':pamt,
+                'currency1':'USD',
+                'currency2':coin,
+                'buyer_email':request.user.email,
+                'buyer_name':wallet.wallet,
+                'custom':'top up',
+            }
+
+            txn = paycoin.createTransaction(tx_para)
+            tc = TopupCard()
+            tc.card = gt_card
+            tc.from_user = request.user
+            tc.identify_walletaddress = wallet.wallet
+            tc.amount = int(amount)
+            tc.payment_amount = pamt #amount+((0.75/100)*amount)
+            tc.payment_type = 'coinpayment'
+            tc.coinpayment_tx_hash = txn['txn_id']
+            tc.payment_status = 'initiated'
+            tc.save()
+
+            return HttpResponseRedirect(txn['checkout_url'])
+        else:
+            return HttpResponseRedirect('/dashboard')
+    else:
+        return HttpResponseRedirect('/dashboard')
+
 
 @login_required(login_url='/')
 def getTransactionLog(request,card_no):
