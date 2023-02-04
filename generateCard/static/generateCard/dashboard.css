@@ -1,22 +1,11 @@
 
-<style>
-.material-symbols-outlined {
-    font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 48
-    color: black;
-    }
-
-
     body{
         background-color: rgb(242, 242, 242);
         margin: 0px;
         padding: 50px;
     }
     .header h1{
-        font-size: 20px;
+        font-size: 1.1em;
     }
 
     a{
@@ -46,7 +35,7 @@
     .sidebar{
         border: 1px solid rgb(242, 242, 242);
         grid-area: sb;
-        background-color: black;
+        background-color: lavender;
         display: flex;
         flex-direction: column;
         align-items: left;
@@ -57,7 +46,7 @@
     .sidebar h3{
         margin: 0;
         padding: 10px;
-        background-color: darkolivegreen;
+        background-color: darkblue;
         border-top-right-radius: 20px;
         border-bottom-right-radius: 20px;
     }
@@ -69,7 +58,7 @@
         justify-content: last baseline;
         align-items: left;
         text-decoration: none;
-        color: white;
+        color: black;
         font-size: 14px;
         font-weight: bold;
         align-items: center;
@@ -89,9 +78,11 @@
         flex-direction: row;
         padding: 10px;
         grid-area: hd;
-        justify-content: space-between;
+        justify-content: flex-start;
         font-family: 'Noto Sans', sans-serif;
         background-color: rgb(255, 255, 255);
+        padding-left: 21px;
+        align-items: center;
     }
 
     .header form{
@@ -282,11 +273,17 @@
         }
         .modal-cover{
             background-color: lavender;
-            width: 300px;
             align-items: center;
             justify-content: center;
             display: flex;
+            flex-direction: column;
+            width: inherit;
+            margin-right: 35px;
 
+        }
+        .modal-cover h1{
+            font-weight: lighter;
+            font-family: Noto Sans, sans-serif;
         }
         .modal-cover img{
             height: 200px;
@@ -313,6 +310,11 @@
             flex-direction: column;
             font-family: 'Noto Sans', sans-serif;
 
+        }
+
+        .form-css label{
+            font-size: 12px;
+            color: #495463;
         }
 
         .form-css input{
@@ -352,8 +354,9 @@
         }
 
         .elt-logo{
-            width: 50px;
-            height: 50px;
+            width: 37px;
+            height: 35px;
+            margin-right: 10px;
         }
 
         .token-alert{
@@ -376,5 +379,3 @@
             border-radius: 5px;
             color: blue;
         }
-
-</style>

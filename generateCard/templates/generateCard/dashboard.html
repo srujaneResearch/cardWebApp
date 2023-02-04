@@ -24,8 +24,8 @@
             
             </div>
             <div class="header">
-                <img src="{% static 'generateCard/images/elt.png' %}" class="elt-logo"/>
-                <h1>New Enternal Life</h1>
+                <img src="{% static 'generateCard/images/eltlogo.png' %}" class="elt-logo"/>
+                <h1>New eternal life | Eternal card</h1>
             </div>
             <div class="content">
                 <div class="slides">
@@ -64,7 +64,7 @@
                         {% if tokenBalance > 2499 %}
                         <div class="cheader-wrap">
                             <div class="debitcardBox gap">
-                                <a href="#" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate USD</a>
+                                <a href="#" onclick="generateUSD(this)" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate USD</a>
                             </div>
                             <div class="debitcardBox gap">
                                 <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate EUR</a>
@@ -125,7 +125,7 @@
 
                                     </div>
                                     <div class="ucard">
-                                        <a id="transaction" c_num="{{ cards.card_number }}" class="cardfunctions gen"><span class="material-symbols-outlined">Receipt_Long</span>Transactions</a>
+                                        <a href="#" id="transaction" onclick="transaction(this)" c_num="{{ cards.card_number }}" class="cardfunctions gen"><span class="material-symbols-outlined">Receipt_Long</span>Transactions</a>
 
                                     </div>                                    
                                 </div>
@@ -143,8 +143,8 @@
         <!-- Modal content -->
             <div class="modal-content">
                 <div class="modal-cover">
-                    <img src="{% static 'generateCard/images/elt.png' %}"/>
-
+                    <img src="{% static 'generateCard/images/eltlogo.png' %}"/>
+                    <h1>Order Your Card Now!</h1>
                 </div>
                 <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" method="POST" onsubmit="return validateForm()">
                     {% csrf_token %}
@@ -175,84 +175,75 @@
             </div>
         </div>
 <script>
-// Get the modal
-var modal = document.getElementById("myModal");
+    function validateForm() {
+        let x = document.forms["cgenform"]["amount"].value;
+        let c_no =  document.forms["cgenform"]
+        x = Number(x)
+        if (isNaN(x) || x <3 || x>5000) {
+            alert("Amount must be greater than 50 and less than 5000");
+            return false;
+        }
+    }
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+    function generateUSD(element){
+        console.log(element);
+        var tmodal = document.getElementById("myModal");
+        //var tspan = document.getElementsByClassName("close")[0];
+        //document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
+        tmodal.style.display = "flex";        
+    }
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+    function topUp(element){
+        console.log(element);
+        var tmodal = document.getElementById("topup-modal");
+        var tspan = document.getElementsByClassName("close")[0];
+        document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
+        tmodal.style.display = "flex";
+    }
 
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "flex";
-}
+    function transaction(element){
+        console.log(element);
+        console.log(element.attributes['c_num'].value);
+        let c_no = element.attributes['c_num'].value;
+        let req = new XMLHttpRequest();
+        req.open("GET",'/transactionlog/'+c_no);
+        req.send();
+        req.onload = () => {
+            if(req.readyState == 4 && req.status==200){
+                console.log(req.response);
+            }
+            else{
+                console.log(req);
+            }
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
+        };
 
-// When the user clicks anywhere outside of the modal, close it
+    }
 
-function validateForm() {
-  let x = document.forms["cgenform"]["amount"].value;
-  let c_no =  document.forms["cgenform"]
-  x = Number(x)
-  if (isNaN(x) || x <3 || x>5000) {
-    alert("Amount must be greater than 50 and less than 5000");
-    return false;
-  }
-  else{
+    function validateTopupForm() {
+    let x = document.forms['topupform']['Amount'].value;
+    let tform = document.forms["topupform"];
+    let c_no = tform.attributes['c_num'].value;
+    console.log(x);
+    console.log(tform);
+    console.log(c_no);
     
-  }
-}
-
-
-function topUp(element){
-    console.log(element);
-    var tmodal = document.getElementById("topup-modal");
-    var tspan = document.getElementsByClassName("close")[0];
-    document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
-    
-    // When the user clicks the button, open the modal 
-    
-    tmodal.style.display = "flex";
-    
-    
-    // When the user clicks on <span> (x), close the modal
-
-}
-
-function validateTopupForm() {
-  let x = document.forms['topupform']['Amount'].value;
-  let tform = document.forms["topupform"];
-  let c_no = tform.attributes['c_num'].value;
-  console.log(x);
-  console.log(tform);
-  console.log(c_no);
-  
-  x = Number(x)
-  if (isNaN(x) || x <3 || x>5000) {
-    alert("Amount must be greater than 50 and less than 5000");
-    return false;
-  }
-  else{
-    tform.action = '/topup/'+c_no;
-    return true;
-  }
-}
+    x = Number(x)
+    if (isNaN(x) || x <3 || x>5000) {
+        alert("Amount must be greater than 50 and less than 5000");
+        return false;
+    }
+    else{
+        tform.action = '/topup/'+c_no;
+        return true;
+    }
+    }
 
 </script>
 
 <script>
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
-        console.log(event);
-        console.log(event.target);
-        console.log(event.target==modal);
-        console.log(event.target.attributes['class'].value);
       if (event.target.attributes['class'].value == 'modal' || event.target.attributes['class'].value=='close gap') {
             if (document.getElementById('myModal').style.display == 'flex'){
                 document.getElementById('myModal').style.display ='none';

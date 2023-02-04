@@ -324,6 +324,8 @@ def topupCard(request,card_no):
             }
 
             txn = paycoin.createTransaction(tx_para)
+            print(txn)
+            
             tc = TopupCard()
             tc.card = gt_card
             tc.from_user = request.user
