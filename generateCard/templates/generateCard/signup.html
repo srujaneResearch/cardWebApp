@@ -19,15 +19,32 @@
                         <small>Create New EternalLifeToken Account</small>
 
                     </div>
-                    <form class="form-css" method="POST" action="{% url 'register' %}">
+                    <form name ="signupform" class="form-css" method="POST" action="{% url 'register' %}" onsubmit="return validateMe()">
                         {% csrf_token %}
-                        <input type="email" name="email" placeholder="Email" style="width: 100%;"/>
+                        <input type="email" required name="email" placeholder="Email" style="width: 100%;"/>
                         
-                        <input type="password" name="password" placeholder="New Password" style="width: 100%;"/>
+                        <input type="password" required name="password" placeholder="New Password" style="width: 100%;"/>
                         
-                        <input type="password" name="confpassword" placeholder="Confirm Password" style="width: 100%;"/>
+                        <input type="password" required name="confpassword" placeholder="Confirm Password" style="width: 100%;"/>
                         <br/>
-                        <input type="submit" value="Signup" class="submit-btn" style="width: 100%;"/>
+                        <input type="submit" value="Signup"  class="submit-btn" style="width: 100%;" />
+                        <div class="remember-me">
+                            <div>
+                                <span>Already have an account?</span>
+                            </div>
+                            <a href="{% url 'index' %}">Sign in here.</a>
+                        </div>
+                        {% if not status%}
+                        <div class="auth-alert">
+                            <span>You need to register at our ICO page!.</span>
+                            <a href="https://eternallifetoken.net/public/login">ICO</a>
+                        </div>
+                        {% endif %}
+                        {% if user%}
+                        <div class="auth-alert">
+                            <span>Account already exsist. please sign in.</span>
+                        </div>
+                        {% endif %}
                     </form>
 
 
@@ -36,11 +53,14 @@
         </div>
 
     </body>
-</html>
-            <div class="form">
-
-            </div>
-        </div>
-
-    </body>
+    <script>
+        function validateMe(){
+            let f1 = document.forms['signupform']['password'].value;
+            let f2 = document.forms['signupform']['confpassword'].value;
+            if(f1 != f2){
+                alert("Password doesnot matched!");
+                return false;
+            }
+        }
+    </script>
 </html>

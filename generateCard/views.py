@@ -141,39 +141,46 @@ def coinpaymentWebhook(request):
 def index(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/dashboard')    
-    return render(request, 'generateCard/login.html')
+    return render(request, 'generateCard/login.html',context={'status':True})
 
 def singup(request):
-    return render(request,'generateCard/signup.html')
+    return render(request,'generateCard/signup.html',context={'status':True,'user':False})
 
 def register(request):
     if request.method == 'POST':
         email,password = request.POST['email'],request.POST['password']
+        try:
+            k = User.objects.get(username=email)
+            return render(request,'generateCard/signup.html',context={"status":True,"user":True})
+        except:
+            print("user not exsist")
+        
         print(request.method)
+        print(accessUser(email))
         if len(accessUser(email)) != 0:
             user = User.objects.create_user(username=email,email=email,password=password)
             user.save()
             auser = authenticate(request,username=email,password=password)
-
             if auser is not None:
                 login(request,auser)
                 return HttpResponseRedirect('/dashboard')
             else:
                 return HttpResponseRedirect('/')
         else:
-            return HttpResponseRedirect('/')
-            
+            return render(request,'generateCard/signup.html',context={'status':False,'user':False})            
     else:
         return HttpResponseRedirect('/')
 
 def loginAuth(request):
-    #print(request.method,'\n\n',request)
+    print(request.POST,'\n\n',request)
     if request.method=='POST':
         print("login view")
-
         if request.user.is_authenticated:
             return HttpResponseRedirect('/dashboard')
         else:
+            if 'remember' not in request.POST.keys():
+                request.session.set_expiry(0)
+
             username,password = request.POST['email'],request.POST['password']
             user = authenticate(username=username,password=password)
             print(user)
@@ -183,7 +190,8 @@ def loginAuth(request):
                 return HttpResponseRedirect('/dashboard')
             else:
                 print("not")
-                return HttpResponseRedirect('/')
+                status = False
+                return render(request,'generateCard/login.html',context={'status':status})
     else:
         return HttpResponseRedirect('/')
 
@@ -200,8 +208,19 @@ def dashboard(request):
 
     user = request.user
     print(request.user.username)
-    udb = accessUser(user.username)[0]
-    print(udb)
+    try:
+        udb = accessUser(user.username)[0]
+        print(udb)
+        if token_balance == None:
+            token_balance = 0
+        else:
+            token_balance = int(udb[16])
+        wallet,emailaddr = udb[13],udb[2]
+    except:
+        token_balance,wallet,emailaddr = 0,"NA",request.user.email
+
+
+    #print(udb)
     c = CardTypes.objects.all()
     cards_generated = CardGenerated.objects.filter(card_holder_user=request.user)
     if len(cards_generated)==0:
@@ -212,7 +231,6 @@ def dashboard(request):
     tform = forms.TopupForm()
     print(card_status)
     print(cards_generated)
-    token_balance,wallet,emailaddr = int(udb[16]),udb[13],udb[2]
     #card_status=False
     if card_status:
         balance = 0

@@ -16,7 +16,6 @@
                     <div class="header">
                         <h1>Sign in.</h1>
                         <small>with your EternalLifeToken Account</small>
-
                     </div>
 
                     <form method="POST" class="form-css" action="{% url 'loginAuth' %}">
@@ -24,7 +23,18 @@
                         <input type="email" name="email" placeholder="Email" style="width: 100%;"/>
                         <br/>
                         <input type="password" name="password" placeholder="Password" style="width: 100%;"/>
+                        <div class="remember-me">
+                            <div>
+                                <input type="checkbox" name="remember"/><label>Remember me</label>
+                            </div>
+                            <a>Forgot password?</a>
+                        </div>
                         <input type="submit" class="submit-btn" style="width: 100%;"/>
+                        {% if not status%}
+                        <div class="auth-alert">
+                            <span>email or password is incorrect!.</span>
+                        </div>
+                        {% endif %}
                     </form>
                     <br/>
                     <br/>

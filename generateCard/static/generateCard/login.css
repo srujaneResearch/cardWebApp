@@ -65,3 +65,34 @@
     .header{
         margin-bottom: 40px;
     }
+    .form-css label{
+        font-family: Noto Sans, sans-serif;
+    }
+
+
+    .remember-me{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+    }
+
+    .auth-alert{
+        background-color: lightcoral;
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .auth-alert a{
+        background-color: ghostwhite;
+        border-radius: 20px;
+        padding: 5px;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 5px;
+        color: firebrick;
+    }
