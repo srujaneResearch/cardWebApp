@@ -211,11 +211,12 @@ def dashboard(request):
     try:
         udb = accessUser(user.username)[0]
         print(udb)
+        token_balance = udb[16]
         if token_balance == None:
             token_balance = 0
         else:
             token_balance = int(udb[16])
-        wallet,emailaddr = udb[13],udb[2]
+            wallet,emailaddr = udb[13],udb[2]
     except:
         token_balance,wallet,emailaddr = 0,"NA",request.user.email
 
