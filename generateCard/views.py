@@ -78,6 +78,7 @@ def coinpaymentWebhook(request):
                                 ipay.payment_status = 'successful'
                                 ipay.timestamp_finished = datetime.now()
                                 ipay.save()
+                                return HttpResponse(status=200)
                             else:
                                 print("API Fails For Top Up")
                                 return HttpResponseBadRequest("API FAIL FOR TOPUP")
