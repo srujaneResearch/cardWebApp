@@ -50,6 +50,7 @@ def coinpaymentWebhook(request):
                 txn_id = request.POST['txn_id']
                 tx_status = int(request.POST['status'])
                 try:
+                    print(request.POST)
                     if request.POST['custom']=='top up':
                         ipay = TopupCard.objects.get(coinpayment_tx_hash=txn_id)
                     else:
