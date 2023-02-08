@@ -68,7 +68,7 @@ def coinpaymentWebhook(request):
                         if request.POST['custom']=='top up':
                             print(request.POST)
                             c_no = ipay.card.card_number
-                            amt = ipay.amount
+                            amt = int(ipay.amount)
                             c_instance = CardGenerated.objects.get(card_number=c_no)
                             res = card.topUpCard(amt,c_no)
                             print(res)
@@ -79,8 +79,8 @@ def coinpaymentWebhook(request):
                                 ipay.timestamp_finished = datetime.now()
                                 ipay.save()
                             else:
-                                print("API Fails")
-                                return HttpResponse(status=200)
+                                print("API Fails For Top Up")
+                                return HttpResponseBadRequest("API FAIL FOR TOPUP")
                         else:
 
                             name,surname = ipay.card_holder_name,ipay.card_holder_surname
@@ -117,9 +117,9 @@ def coinpaymentWebhook(request):
                                 ipay.save()
                                 return HttpResponse(status=200)
                             else:
-                                print("API Fails")
+                                print("API Fails For Card generation")
 
-                                return HttpResponse(status=200)
+                                return HttpResponseBadRequest("API FAILS TOPUP")
                     
                     elif tx_status < 0:
                         ipay.payment_status = "rejected"
