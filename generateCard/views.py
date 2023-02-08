@@ -66,9 +66,11 @@ def coinpaymentWebhook(request):
                     if tx_status == 100:
 
                         if request.POST['custom']=='top up':
+                            print(request.POST)
                             c_no = ipay.card.card_number
+                            amt = ipay.amount
                             c_instance = CardGenerated.objects.get(card_number=c_no)
-                            res = card.topUpCard(c_no)
+                            res = card.topUpCard(amt,c_no)
                             print(res)
                             if res['success']:
                                 c_instance.card_balance = res['success']['data']['balance']
