@@ -11,5 +11,6 @@ urlpatterns=[
     path('checkoutCoinpayment',views.checkoutCoinpayments,name='checkout'),
     path('topup/<int:card_no>',views.topupCard,name='topup'),
     path('transactionlog/<int:card_no>',views.getTransactionLog,name='transaction'),
+    path("getCardFee/<int:card_type>",views.getCardTypeInfo,name='cardfee'),
     path('coinpaymentWebhook',views.coinpaymentWebhook,name='coinpaymentWebhook')
     ]

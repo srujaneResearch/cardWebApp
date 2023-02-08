@@ -276,10 +276,14 @@ def checkoutCoinpayments(request):
             name,surname,amount,addl1,addl2,city,state,country,zipcode,cardtype = request.POST['name'],request.POST['surname'],request.POST['amount'],request.POST['addl1'],'---',request.POST['city'],request.POST['state'],request.POST['country'],request.POST['zipcode'],request.POST['cardtype']
             coin = request.POST['crypto']
             print(name)
+            amount = int(amount)
 
             paycoin = pyCoinpayments.CryptoPayments(coin_pub,coin_pvt,'http://eternalcard.net/coinpaymentWebhook')
+            cdetails = CardTypes.objects.get(card_type=int(cardtype))
             
-            pamt = (int(amount)*(0.75/100))+int(amount)
+            c_fee = cdetails.card_generatefee + cdetails.card_topup_fixfee + ((cdetails.card_topup_percentfee/100)*amount)
+            total_amt = amount+c_fee
+            pamt = (0.0075*total_amt)+total_amt
             
             tx_para = {
                 'amount':pamt,
@@ -339,9 +343,15 @@ def topupCard(request,card_no):
         if request.method=='POST':
             print(request.POST)
             amount = request.POST['Amount']
+            amount = int(amount)
+
+            if gt_card.card_balance+amount > gt_card.card_type.card_balance_limit:
+                return HttpResponseRedirect('/dashboard')
             coin = request.POST['crypto']
             paycoin = pyCoinpayments.CryptoPayments(coin_pub,coin_pvt,'http://eternalcard.net/coinpaymentWebhook')            
-            pamt = (int(amount)*(0.75/100))+int(amount)
+            tfees = gt_card.card_type.card_topup_fixfee + (gt_card.card_type.card_topup_percentfee/100)*amount
+            tamount = amount+tfees
+            pamt = 0.0075*tamount + tamount
             tx_para = {
                 'amount':pamt,
                 'currency1':'USD',
@@ -382,6 +392,21 @@ def getTransactionLog(request,card_no):
         else:
             print("Balance API Error")
             return HttpResponseBadRequest("API Error")
+    else:
+        return HttpResponseBadRequest("User Not Authenticated.")
+
+@login_required(login_url='/')
+def getCardTypeInfo(request,card_type):
+    if request.user.is_authenticated:
+        try:
+            c = CardTypes.objects.get(card_type=card_type)
+            res = {"card_generate_fee":c.card_generatefee,
+                    "card_topup_fee":c.card_topup_fixfee,
+                    "card_topup_per":c.card_topup_percentfee,
+            }
+            return JsonResponse(res)
+        except ObjectDoesNotExist:
+            return HttpResponseBadRequest("Card not available")
     else:
         return HttpResponseBadRequest("User Not Authenticated.")
 

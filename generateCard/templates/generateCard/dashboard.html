@@ -64,7 +64,7 @@
                         {% if tokenBalance > 2499 %}
                         <div class="cheader-wrap">
                             <div class="gbtn gap">
-                                <a href="#" onclick="generateUSD(this)" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate USD</a>
+                                <a href="#" onclick="generateUSD(this)"  id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate USD</a>
                             </div>
                             <div class="gbtn gap">
                                 <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate EUR</a>
@@ -129,7 +129,7 @@
                                         <span>{{ cards.card_balance }} USD</span>
                                     </div>
                                     <div class="ucard">
-                                        <a href="#" id="topup-btn" onclick="topUp(this)" c_num="{{ cards.card_number }}"  class="cardfunctions gen"><span class="material-symbols-outlined">Paid</span>Top up</a>
+                                        <a href="#" id="topup-btn" onclick="topUp(this)" c_num="{{ cards.card_number }}" c_type="{{ cards.card_type.card_type }}"  class="cardfunctions gen"><span class="material-symbols-outlined">Paid</span>Top up</a>
 
                                     </div>
                                     <div class="ucard">
@@ -212,6 +212,29 @@
                 f[i].style.display="none";
             }
         }
+        let req = new XMLHttpRequest();
+        let c_type =  Number(document.forms['cgenform']['cardtype'].value);
+        console.log(c_type);
+        req.open("GET",'/getCardFee/'+c_type);
+        req.send();
+        req.onload = () => {
+            if(req.readyState == 4 && req.status==200){
+                console.log(req.response);
+
+                let l = JSON.parse(req.response)
+                console.log(l);
+                console.log(req);
+                cg_fee = l['card_generate_fee'];
+                ct_fee = l['card_topup_fee'];
+                ct_per = l['card_topup_per'];
+                console.log(cg_fee);
+            }
+            else{
+                console.log(req);
+            }
+
+        };
+
 
     }
 
@@ -219,6 +242,39 @@
         console.log(element);
         let span = document.getElementById('ecname');
         span.innerHTML = "Card: "+element.attributes['c_num'].value;
+        let ctype = element.attributes['c_type'].value;
+        console.log(ctype);
+        let req = new XMLHttpRequest();
+        ctype = Number(ctype)
+        req.open("GET",'/getCardFee/'+ctype);
+        req.send();
+        req.onload = () => {
+            if(req.readyState == 4 && req.status==200){
+                console.log(req.response);
+
+                let l = JSON.parse(req.response)
+                console.log(l);
+                console.log(req);
+                cg_fee = l['card_generate_fee'];
+                ct_fee = l['card_topup_fee'];
+                ct_per = l['card_topup_per'];
+                console.log(cg_fee);
+                let eamt = Number(document.forms['topupform']['Amount'].value);
+                let tfees = ct_fee+((ct_per/100)*eamt);
+                let tamt = eamt+tfees
+                let famt = (0.0075*tamt) + tamt
+                document.forms['topupform']['fee'].setAttribute('placeholder',String(tfees));
+                document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(tamt);
+
+            }
+            else{
+                console.log(req);
+            }
+
+        };
+
+
+
         var tmodal = document.getElementById("topup-modal");
         var tspan = document.getElementsByClassName("close")[0];
         document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
@@ -267,6 +323,9 @@
 
 <script>
     // When the user clicks anywhere outside of the modal, close it
+    let cg_fee=0;
+    let ct_fee = 0;
+    let ct_per = 0;
     window.onclick = function(event) {
       if (event.target.attributes['class'].value == 'modal' || event.target.attributes['class'].value=='close gap') {
             if (document.getElementById('myModal').style.display == 'flex'){
@@ -280,12 +339,54 @@
       }
     }
 
-    document.forms['cgenform']['amount'].onchange = function(event){
-        document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(Number(document.forms['cgenform']['amount'].value) + 0.0075*Number(document.forms['cgenform']['amount'].value));
+    document.forms['cgenform']['cardtype'].onchange = function(event){
+        let req = new XMLHttpRequest();
+        let c_type =  Number(document.forms['cgenform']['cardtype'].value);
+        console.log(c_type);
+        req.open("GET",'/getCardFee/'+c_type);
+        req.send();
+        req.onload = () => {
+            if(req.readyState == 4 && req.status==200){
+                console.log(req.response);
 
+                let l = JSON.parse(req.response)
+                console.log(l);
+                console.log(req);
+                cg_fee = l['card_generate_fee'];
+                ct_fee = l['card_topup_fee'];
+                ct_per = l['card_topup_per'];
+                console.log(cg_fee);
+                let eamt = Number(document.forms['cgenform']['amount'].value)
+                let tfees = cg_fee+ct_fee+((ct_per/100)*eamt)
+                let tamt = eamt+tfees
+                let famt = (0.0075*tamt) + tamt
+                document.forms['cgenform']['fee'].setAttribute('placeholder',String(tfees));
+                document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(famt);
+
+            }
+            else{
+                console.log(req);
+            }
+
+        };
+    }
+
+    document.forms['cgenform']['amount'].onchange = function(event){
+        let eamt = Number(document.forms['cgenform']['amount'].value);
+        let tfees = cg_fee+ct_fee+((ct_per/100)*eamt)
+        let tamt = eamt+tfees
+        let famt = (0.0075*tamt) + tamt        
+
+        document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(famt);
+        document.forms['cgenform']['fee'].setAttribute('placeholder',String(tfees));
     }
     document.forms['topupform']['Amount'].onchange = function(event){
-        document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(Number(document.forms['topupform']['Amount'].value) + 0.0075*Number(document.forms['topupform']['Amount'].value));
+        let eamt = Number(document.forms['topupform']['Amount'].value);
+        let tfees = ct_fee+((ct_per/100)*eamt);
+        let tamt = eamt+tfees
+        let famt = (0.0075*tamt) + tamt
+        document.forms['topupform']['fee'].setAttribute('placeholder',String(tfees));
+        document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(famt);
 
     }
     </script>
