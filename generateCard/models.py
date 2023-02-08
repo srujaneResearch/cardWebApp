@@ -16,7 +16,7 @@ class CardTypes(models.Model):
     card_kyc = models.BooleanField()
 
 class UserWallet(models.Model):
-    wallet = models.CharField(max_length=255)
+    wallet = models.CharField(max_length=255,null=True,blank=True)
     user = models.OneToOneField(User,on_delete=models.CASCADE)
 
 class InitialPayment(models.Model):

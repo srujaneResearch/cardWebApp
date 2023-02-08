@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 
 class TopupForm(forms.Form):
     Amount = forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Min $50 Max- $5000'}))
+    fee = forms.CharField(required=True,label="Fee",widget=forms.TextInput(attrs={'placeholder': '0.75% coinpayment fee'}),disabled=True)
     crypto = forms.ChoiceField(choices=[('BTC','Bitcoin'),
                                         ('ETH','Ethereum'),
                                         ('ETC','Ether Classic'),
@@ -20,6 +21,7 @@ class GenerateCardForm(forms.Form):
     c = [(x.card_type,x.card_name) for x in CardTypes.objects.all()]
     cardtype = forms.ChoiceField(choices=c)
     amount = forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Min $50 Max - $5000'}))
+    fee = forms.CharField(required=True,label="Fee",widget=forms.TextInput(attrs={'placeholder': '0.75% coinpayment fee'}),disabled=True)
     name = forms.CharField(max_length=255, required=True,widget=forms.TextInput(attrs={'placeholder': 'Name'}))
     surname = forms.CharField(max_length=255, required=True,widget=forms.TextInput(attrs={'placeholder': 'Surname'}))
     addl1 = forms.CharField(widget=forms.Textarea,required=True, label="Street and house no.")

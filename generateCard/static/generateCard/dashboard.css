@@ -148,8 +148,15 @@
 
     .debitcardBox{
         display: flex;
-        flex-direction: row;
-        padding-bottom: 20px;
+        flex-direction: row-reverse;
+        background-color: ghostwhite;
+        margin: 5px;
+        border-radius: 20px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px;
+
+        
     }
 
     .debitCardDetail-wraper{
@@ -160,17 +167,25 @@
         flex-direction: column;
         margin-left: 20px;
         border-radius: 20px;
-        background-color: rgb(245,245,245);
         justify-content: center;
     }
 
+    .gtn{
+        display: flex;
+        flex-direction: row-reverse;
+        margin: 5px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px;
+   
+    }
 
     
 
     .debitcards{
         height: 200px;
         width: 320px;
-        background-image: url('images/visa_usd.png');
+        
         background-size: contain;
         background-repeat: no-repeat;
         display: flex;
@@ -179,7 +194,18 @@
         justify-content: space-evenly;
         
     }
-
+    .usd-visa{
+        background-image: url('images/visa_usd.png');
+    }
+    .usd-master{
+        background-image: url('images/master_usd.png');
+    }
+    .eur-visa{
+        background-image: url('images/visa_eur.png');
+    }
+    .eur-master{
+        background-image: url('images/master_eur.png');
+    }
     .printCard{
         display: flex;
         flex-direction: column;

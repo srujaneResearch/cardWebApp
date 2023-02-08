@@ -63,10 +63,10 @@
                         </div>
                         {% if tokenBalance > 2499 %}
                         <div class="cheader-wrap">
-                            <div class="debitcardBox gap">
+                            <div class="gbtn gap">
                                 <a href="#" onclick="generateUSD(this)" id="myBtn" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate USD</a>
                             </div>
-                            <div class="debitcardBox gap">
+                            <div class="gbtn gap">
                                 <a href="#" class="cardfunctions"><span class="material-symbols-outlined">Add_circle</span>Generate EUR</a>
                             </div>
                         </div>
@@ -82,7 +82,15 @@
                     <div class="debitcardContainer gap">
                         {% for cards in cardgenerated %}
                         <div class="debitcardBox">
-                            <div class="debitcards">
+                            {% if 'Visa' in cards.card_type.card_name and 'USD' in cards.card_type.card_name %}
+                            <div class="debitcards usd-visa">
+                            {% elif 'Visa' in cards.card_type.card_name and 'EUR' in cards.card_type.card_name %}
+                            <div class="debitcards eur-visa">
+                            {% elif 'Mastercard' in cards.card_type.card_name and 'USD' in cards.card_type.card_name %}
+                            <div class="debitcards usd-master">
+                            {% elif 'Mastercard' in cards.card_type.card_name and 'EUR' in cards.card_type.card_name %}
+                            <div class="debitcards eur-master">
+                            {% endif %}
                                 <div class="printCard">
                                     <div class="userDetails"><div class="ucard"><span>{{ cards.card_number }}</span></div></div>
                                     
@@ -165,8 +173,11 @@
         <div id="topup-modal" class="modal">
                 <!-- Modal content -->
             <div class="modal-topup">
+                    
                     <form class="form-css" name = "topupform"  method="POST" onsubmit="return validateTopupForm()">
                         {% csrf_token %}
+                        <span id="ecname"></span>
+                        <br/>
                         {{ tform }}
                         <br/>
                         <input type="submit" class="cardfunctions" value="Checkout">
@@ -190,11 +201,21 @@
         var tmodal = document.getElementById("myModal");
         //var tspan = document.getElementsByClassName("close")[0];
         //document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
-        tmodal.style.display = "flex";        
+        tmodal.style.display = "flex";
+        let f = document.forms['cgenform']['cardtype'].options;
+        console.log(f)
+        for(i=0; i<f.length; i++){
+            if(f[i].text.match('EUR')){
+                f[i].style.display="none";
+            }
+        }
+
     }
 
     function topUp(element){
         console.log(element);
+        let span = document.getElementById('ecname');
+        span.innerHTML = "Card: "+element.attributes['c_num'].value;
         var tmodal = document.getElementById("topup-modal");
         var tspan = document.getElementsByClassName("close")[0];
         document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)

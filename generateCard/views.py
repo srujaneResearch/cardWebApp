@@ -15,6 +15,7 @@ from generateCard import forms
 from django.views.decorators.csrf import csrf_exempt
 from generateCard import pyCoinpayments
 from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 coin_pub = "d9c1815b8809bc4627561eda3a185528645f7bbe57ed97f94b3e8e1a78a03ca5"
 coin_pvt = "F3Daf74154b0597Cf8cB69eEb0A782f85D0cdfE7a4644dAAdeD655987Ec27866"
 
@@ -141,7 +142,7 @@ def coinpaymentWebhook(request):
 def index(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/dashboard')    
-    return render(request, 'generateCard/login.html',context={'status':True})
+    return render(request, 'generateCard/login.html',context={'active':True,'status':True,'ico':True})
 
 def singup(request):
     return render(request,'generateCard/signup.html',context={'status':True,'user':False})
@@ -167,7 +168,7 @@ def register(request):
             else:
                 return HttpResponseRedirect('/')
         else:
-            return render(request,'generateCard/signup.html',context={'status':False,'user':False})            
+            return render(request,'generateCard/signup.html',context={'status':False,'user':False})           
     else:
         return HttpResponseRedirect('/')
 
@@ -182,18 +183,27 @@ def loginAuth(request):
                 request.session.set_expiry(0)
 
             username,password = request.POST['email'],request.POST['password']
-            user = authenticate(username=username,password=password)
-            print(user)
-            if user is not None:
-                print("login complete")
-                login(request,user)
-                return HttpResponseRedirect('/dashboard')
-            else:
-                print("not")
-                status = False
-                return render(request,'generateCard/login.html',context={'status':status})
-    else:
-        return HttpResponseRedirect('/')
+            try:
+                uget = User.objects.get(username=username)
+                if not uget.is_active:
+                    return render(request,'generateCard/login.html',context={'active':False,'status':True,'ico':True})
+                else:
+                    user = authenticate(username=username,password=password)
+                    print(user)
+                    if user is not None:
+                        print("login complete")
+                        login(request,user)
+                        return HttpResponseRedirect('/dashboard')
+                    else:
+                        print("not")
+                        status = False
+                        ico=True
+                        active=True
+                        return render(request,'generateCard/login.html',context={'active':active,'status':status,'ico':ico})
+
+            except ObjectDoesNotExist:
+                print("error")
+                return render(request,'generateCard/signup.html',context={'status':False,'user':False})
 
 def logoutAuth(request):
     if request.user.is_authenticated:
@@ -220,8 +230,6 @@ def dashboard(request):
     except:
         token_balance,wallet,emailaddr = 0,"NA",request.user.email
 
-
-    #print(udb)
     c = CardTypes.objects.all()
     cards_generated = CardGenerated.objects.filter(card_holder_user=request.user)
     if len(cards_generated)==0:
@@ -239,9 +247,6 @@ def dashboard(request):
             balance+=_.card_balance
     else:
         balance = 0
-
-
-
     context = {'tokenBalance':token_balance,
                 'wallet':wallet,
                 'emailaddress':emailaddr,

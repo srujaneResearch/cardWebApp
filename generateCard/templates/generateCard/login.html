@@ -30,15 +30,21 @@
                             <a>Forgot password?</a>
                         </div>
                         <input type="submit" class="submit-btn" style="width: 100%;"/>
-                        {% if not status%}
+                        {% if not status %}
                         <div class="auth-alert">
                             <span>email or password is incorrect!.</span>
+                        </div>
+                        {% endif %}
+                        {% if not active%}
+                        <div class="auth-alert">
+                            <span>You need to signup!.</span>
+                            <a href="{% url 'signup'%}">Sign up</a>
                         </div>
                         {% endif %}
                     </form>
                     <br/>
                     <br/>
-                    <span>Don't have an account? <a href="{% url 'singup' %}">Sign up here</a></span>
+                    <span>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></span>
                 </div>
             </div>
         </div>
