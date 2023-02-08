@@ -157,6 +157,7 @@
                 <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" method="POST" onsubmit="return validateForm()">
                     {% csrf_token %}
                     {{ cform.as_table }}
+                    <span id="cgenform-tamount"></span>
                     <br/>
                     <input type="submit" class="cardfunctions" value="Checkout">
                 </form>
@@ -179,7 +180,9 @@
                         <span id="ecname"></span>
                         <br/>
                         {{ tform }}
+                        <span id="topup-amount"></span>
                         <br/>
+                        
                         <input type="submit" class="cardfunctions" value="Checkout">
                     </form>
                     <span class="close gap">&times;</span>
@@ -275,6 +278,15 @@
         
         //event.target.style.display = "none";
       }
+    }
+
+    document.forms['cgenform']['amount'].onchange = function(event){
+        document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(Number(document.forms['cgenform']['amount'].value) + 0.0075*Number(document.forms['cgenform']['amount'].value));
+
+    }
+    document.forms['topupform']['Amount'].onchange = function(event){
+        document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(Number(document.forms['topupform']['Amount'].value) + 0.0075*Number(document.forms['topupform']['Amount'].value));
+
     }
     </script>
 
