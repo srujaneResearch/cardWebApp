@@ -73,7 +73,7 @@ def coinpaymentWebhook(request):
                             res = card.topUpCard(amt,c_no)
                             print(res)
                             if res['success']:
-                                c_instance.card_balance = res['success']['data']['balance']
+                                c_instance.card_balance = c_instance.card_balance+ipay.amount
                                 c_instance.save()
                                 ipay.payment_status = 'successful'
                                 ipay.timestamp_finished = datetime.now()
