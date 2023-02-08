@@ -154,7 +154,7 @@
                     <img src="{% static 'generateCard/images/eltlogo.png' %}"/>
                     <h1>Order Your Card Now!</h1>
                 </div>
-                <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" method="POST" onsubmit="return validateForm()">
+                <form class="form-css" name = "cgenform" action="{% url 'checkout' %}" target="_blank" method="POST" onsubmit="return validateForm()">
                     {% csrf_token %}
                     {{ cform.as_table }}
                     <span id="cgenform-tamount"></span>
@@ -175,7 +175,7 @@
                 <!-- Modal content -->
             <div class="modal-topup">
                     
-                    <form class="form-css" name = "topupform"  method="POST" onsubmit="return validateTopupForm()">
+                    <form class="form-css" name = "topupform" target="_blank"  method="POST" onsubmit="return validateTopupForm()">
                         {% csrf_token %}
                         <span id="ecname"></span>
                         <br/>
