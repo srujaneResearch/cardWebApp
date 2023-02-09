@@ -156,23 +156,19 @@ def register(request):
         email,password = request.POST['email'],request.POST['password']
         try:
             k = User.objects.get(username=email)
-            return render(request,'generateCard/signup.html',context={"status":True,"user":True})
+            if k.is_active:
+                return render(request,'generateCard/signup.html',context={"status":True,"user":True})
         except:
             print("user not exsist")
+            return render(request,'generateCard/signup.html',context={"status":False,"user":False})
         
         print(request.method)
-        print(accessUser(email))
-        if len(accessUser(email)) != 0:
-            user = User.objects.create_user(username=email,email=email,password=password)
-            user.save()
-            auser = authenticate(request,username=email,password=password)
-            if auser is not None:
-                login(request,auser)
-                return HttpResponseRedirect('/dashboard')
-            else:
-                return HttpResponseRedirect('/')
-        else:
-            return render(request,'generateCard/signup.html',context={'status':False,'user':False})           
+
+        k.is_active = True
+        k.set_password(password)
+        k.save()
+        login(request,k)
+        return HttpResponseRedirect('/dashboard')         
     else:
         return HttpResponseRedirect('/')
 
@@ -225,12 +221,12 @@ def dashboard(request):
     try:
         udb = accessUser(user.username)[0]
         print(udb)
-        token_balance = udb[16]
+        token_balance,wallet = udb[16],udb[13]
         if token_balance == None:
             token_balance = 0
-        else:
-            token_balance = int(udb[16])
-            wallet,emailaddr = udb[13],udb[2]
+        if wallet == None:
+            wallet = "NA"
+        emailaddr = udb[2]
     except:
         token_balance,wallet,emailaddr = 0,"NA",request.user.email
 
