@@ -1,6 +1,3 @@
-print("hello")
-
-
 
 from generateCard.models import UserWallet
 from django.contrib.auth.models import User
