@@ -44,7 +44,7 @@
                     <div class="userDetails gap">
                         <div class="ucard">
                             <span>Token balance</span>
-                            <h3>{{ tokenBalance }} ETL</h3>
+                            <h3>{{ tokenBalance }} ELT</h3>
                         </div>
                         <div class="ucard">
                             <span>Wallet address</span>
@@ -74,7 +74,7 @@
                     </div>
                     {% if tokenBalance < 2499 %}
                     <div class="token-alert">
-                        <span>You need more than 2499 ETL to use the card function!</span>
+                        <span>You need more than 2499 ELT to use the card function!</span>
                         <a href="https://eternallifetoken.net/public/login">Buy Here</a>
                     </div>
                     {% endif %}
@@ -189,6 +189,30 @@
             </div>
         </div>
 <script>
+
+    function calCardFee(cg_fee,ct_fee,ct_per){
+        let eamt = Number(document.forms['cgenform']['amount'].value);
+        let tfees = cg_fee+ct_fee+((ct_per/100)*eamt);
+        let tamt = eamt+tfees
+        let famt = (0.0075*tamt) + tamt
+        document.forms['cgenform']['cgenfee'].setAttribute('placeholder',String(cg_fee));
+        document.forms['cgenform']['topfix'].setAttribute('placeholder',String(ct_fee));
+        document.forms['cgenform']['topper'].setAttribute('placeholder',String((ct_per/100)*eamt));
+        document.forms['cgenform']['totalfee'].setAttribute('placeholder',String(tfees));
+        document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(famt);
+    }
+
+    function calTopupFee(cg_fee,ct_fee,ct_per){
+        let eamt = Number(document.forms['topupform']['Amount'].value);
+        let tfees = ct_fee+((ct_per/100)*eamt);
+        let tamt = eamt+tfees
+        let famt = (0.0075*tamt) + tamt
+        document.forms['topupform']['topupfix'].setAttribute('placeholder',String(ct_fee));
+        document.forms['topupform']['topupper'].setAttribute('placeholder',String((ct_per/100)*eamt));
+        document.forms['topupform']['totaltfee'].setAttribute('placeholder',String(tfees));
+        document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(famt);
+    }
+
     function validateForm() {
         let x = document.forms["cgenform"]["amount"].value;
         let c_no =  document.forms["cgenform"]
@@ -228,6 +252,7 @@
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
                 console.log(cg_fee);
+                calCardFee(cg_fee,ct_fee,ct_per);
             }
             else{
                 console.log(req);
@@ -259,12 +284,8 @@
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
                 console.log(cg_fee);
-                let eamt = Number(document.forms['topupform']['Amount'].value);
-                let tfees = ct_fee+((ct_per/100)*eamt);
-                let tamt = eamt+tfees
-                let famt = (0.0075*tamt) + tamt
-                document.forms['topupform']['fee'].setAttribute('placeholder',String(tfees));
-                document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(tamt);
+                calTopupFee(cg_fee,ct_fee,ct_per);
+
 
             }
             else{
@@ -356,12 +377,7 @@
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
                 console.log(cg_fee);
-                let eamt = Number(document.forms['cgenform']['amount'].value)
-                let tfees = cg_fee+ct_fee+((ct_per/100)*eamt)
-                let tamt = eamt+tfees
-                let famt = (0.0075*tamt) + tamt
-                document.forms['cgenform']['fee'].setAttribute('placeholder',String(tfees));
-                document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(famt);
+                calCardFee(cg_fee,ct_fee,ct_per);
 
             }
             else{
@@ -372,21 +388,30 @@
     }
 
     document.forms['cgenform']['amount'].onchange = function(event){
-        let eamt = Number(document.forms['cgenform']['amount'].value);
-        let tfees = cg_fee+ct_fee+((ct_per/100)*eamt)
-        let tamt = eamt+tfees
-        let famt = (0.0075*tamt) + tamt        
+        let req = new XMLHttpRequest();
+        let c_type =  Number(document.forms['cgenform']['cardtype'].value);
+        console.log(c_type);
+        req.open("GET",'/getCardFee/'+c_type);
+        req.send();
+        req.onload = () => {
+            if(req.readyState == 4 && req.status==200){
+                console.log(req.response);
 
-        document.getElementById('cgenform-tamount').innerHTML = "Total Amount: "+String(famt);
-        document.forms['cgenform']['fee'].setAttribute('placeholder',String(tfees));
+                let l = JSON.parse(req.response)
+                console.log(l);
+                console.log(req);
+                cg_fee = l['card_generate_fee'];
+                ct_fee = l['card_topup_fee'];
+                ct_per = l['card_topup_per'];
+                console.log(cg_fee);
+                calCardFee(cg_fee,ct_fee,ct_per);
+            }
+        };   
     }
+
     document.forms['topupform']['Amount'].onchange = function(event){
-        let eamt = Number(document.forms['topupform']['Amount'].value);
-        let tfees = ct_fee+((ct_per/100)*eamt);
-        let tamt = eamt+tfees
-        let famt = (0.0075*tamt) + tamt
-        document.forms['topupform']['fee'].setAttribute('placeholder',String(tfees));
-        document.getElementById('topup-amount').innerHTML = "Total Amount: "+String(famt);
+
+        calTopupFee(cg_fee,ct_fee,ct_per);
 
     }
     </script>

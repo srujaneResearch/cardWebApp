@@ -6,7 +6,9 @@ from django.core.validators import RegexValidator
 
 class TopupForm(forms.Form):
     Amount = forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Min $50 Max- $5000'}))
-    fee = forms.CharField(required=True,label="Fee",widget=forms.TextInput(attrs={'placeholder': 'card fee'}),disabled=True)
+    topupfix = forms.CharField(required=True,label="Topup fee",widget=forms.TextInput(attrs={'placeholder': 'Topup fee'}),disabled=True)
+    topupper = forms.CharField(required=True,label="Topup % fee",widget=forms.TextInput(attrs={'placeholder': 'Topup % fee'}),disabled=True)
+    totaltfee = forms.CharField(required=True,label="Total fee",widget=forms.TextInput(attrs={'placeholder': 'Total fee'}),disabled=True)
     crypto = forms.ChoiceField(choices=[('BTC','Bitcoin'),
                                         ('ETH','Ethereum'),
                                         ('ETC','Ether Classic'),
@@ -16,12 +18,16 @@ class TopupForm(forms.Form):
                                         ('TRX','TRON'),
                                         ('LTCT','Litecoin Test')
                                         ])
+    cpay = forms.CharField(required=True,label="coinpament fee",widget=forms.TextInput(attrs={'placeholder': '0.75% coinpayment fee'}),disabled=True)
 
 class GenerateCardForm(forms.Form):
     c = [(x.card_type,x.card_name) for x in CardTypes.objects.all()]
     cardtype = forms.ChoiceField(choices=c)
     amount = forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Min $50 Max - $5000'}))
-    fee = forms.CharField(required=True,label="Fee",widget=forms.TextInput(attrs={'placeholder': 'card fee'}),disabled=True)
+    cgenfee = forms.CharField(required=True,label="Card generate fee",widget=forms.TextInput(attrs={'placeholder': 'card generate fee'}),disabled=True)
+    topfix = forms.CharField(required=True,label="Topup fee",widget=forms.TextInput(attrs={'placeholder': 'Topup fix fee'}),disabled=True)
+    topper = forms.CharField(required=True,label="Topup % fee",widget=forms.TextInput(attrs={'placeholder': 'Topup \% fee'}),disabled=True)
+    totalfee = forms.CharField(required=True,label="Total fee",widget=forms.TextInput(attrs={'placeholder': 'Total fee'}),disabled=True)
     name = forms.CharField(max_length=255, required=True,widget=forms.TextInput(attrs={'placeholder': 'Name'}))
     surname = forms.CharField(max_length=255, required=True,widget=forms.TextInput(attrs={'placeholder': 'Surname'}))
     addl1 = forms.CharField(widget=forms.Textarea,required=True, label="Street and house no.")
@@ -41,3 +47,4 @@ class GenerateCardForm(forms.Form):
                                         ('TRX','TRON'),
                                         ('LTCT','Litecoin Test')
                                         ])
+    cpayg = forms.CharField(required=True,label="coinpament fee",widget=forms.TextInput(attrs={'placeholder': '0.75% coinpayment fee'}),disabled=True)
