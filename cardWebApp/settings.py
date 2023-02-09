@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "generateCard.apps.GeneratecardConfig",
     "django_extensions",
+    #"generateCard.apps.NewAdminConfig",
 ]
 
 MIDDLEWARE = [

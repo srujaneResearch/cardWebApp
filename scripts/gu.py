@@ -29,6 +29,7 @@ def run():
         if i_u not in w_email:
             print(i_u)
             new_user = User.objects.create_user(username=i_u,email=i_u,password="")
+            new_user.is_active = False
             new_user.save()
             u = UserWallet()
             u.user = new_user

@@ -15,13 +15,14 @@ class CardTypes(models.Model):
     card_transaction_limit = models.BigIntegerField()
     card_kyc = models.BooleanField()
 
+    def __str__(self):
+        return str(self.card_name)
+
 class UserWallet(models.Model):
     wallet = models.CharField(max_length=255,null=True,blank=True)
     user = models.OneToOneField(User,on_delete=models.CASCADE)
 
 class InitialPayment(models.Model):
-    #card_generated = models.ForeignKey(CardGenerated,on_delete=models.CASCADE)
-
     user =  models.ForeignKey(User,on_delete=models.CASCADE)
     identify_walletaddress = models.CharField(max_length=255)
     amount = models.IntegerField(validators=[MinValueValidator(50),MaxValueValidator(5000)])
@@ -72,6 +73,9 @@ class CardGenerated(models.Model):
     card_balance = models.IntegerField()
     initial_payment_id = models.ForeignKey(InitialPayment,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.card_number)
 
 
 
