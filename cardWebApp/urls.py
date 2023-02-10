@@ -18,7 +18,7 @@ from django.urls import path,include
 from generateCard.admin import nadmin
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    #path("admin/", admin.site.urls),
     path("",include('generateCard.urls')),
-    path("nadmin/",nadmin.urls)
+    path("admin/",nadmin.urls)
 ]
