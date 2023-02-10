@@ -1,9 +1,14 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         {% load static %}
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+
         <link rel="stylesheet" href="{% static 'generateCard/login.css' %}"/>
         <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+
         <title>NewEternalLife</title>
+
     </head>
     <body>
         <div class="form-container">
@@ -20,16 +25,16 @@
 
                     <form method="POST" class="form-css" action="{% url 'loginAuth' %}">
                         {% csrf_token %}
-                        <input type="email" name="email" placeholder="Email" style="width: 100%;"/>
+                        <input type="email" name="email" placeholder="Email"/>
                         <br/>
-                        <input type="password" name="password" placeholder="Password" style="width: 100%;"/>
+                        <input type="password" name="password" placeholder="Password"/>
                         <div class="remember-me">
                             <div>
                                 <input type="checkbox" name="remember"/><label>Remember me</label>
                             </div>
                             <a>Forgot password?</a>
                         </div>
-                        <input type="submit" class="submit-btn" style="width: 100%;"/>
+                        <input type="submit" class="submit-btn"/>
                         {% if not status %}
                         <div class="auth-alert">
                             <span>email or password is incorrect!.</span>
@@ -42,12 +47,14 @@
                         </div>
                         {% endif %}
                     </form>
-                    <br/>
-                    <br/>
                     <span>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></span>
                 </div>
             </div>
         </div>
+        <script>
+            //document.body.style.height = window.innerHeight+"px";
+            //document.body.style.width = window.innerWidth+"px";
+        </script>
 
     </body>
 </html>

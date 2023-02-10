@@ -1,6 +1,9 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         {% load static %}
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+
         <link rel="stylesheet" href="{% static 'generateCard/login.css' %}"/>
         <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
         <title>NewEternalLife</title>
@@ -21,13 +24,13 @@
                     </div>
                     <form name ="signupform" class="form-css" method="POST" action="{% url 'register' %}" onsubmit="return validateMe()">
                         {% csrf_token %}
-                        <input type="email" required name="email" placeholder="Email" style="width: 100%;"/>
+                        <input type="email" required name="email" placeholder="Email"/>
                         
-                        <input type="password" required name="password" placeholder="New Password" style="width: 100%;"/>
+                        <input type="password" required name="password" placeholder="New Password"/>
                         
-                        <input type="password" required name="confpassword" placeholder="Confirm Password" style="width: 100%;"/>
+                        <input type="password" required name="confpassword" placeholder="Confirm Password"/>
                         <br/>
-                        <input type="submit" value="Signup"  class="submit-btn" style="width: 100%;" />
+                        <input type="submit" value="Signup"  class="submit-btn">
                         <div class="remember-me">
                             <div>
                                 <span>Already have an account?</span>
@@ -46,8 +49,6 @@
                         </div>
                         {% endif %}
                     </form>
-
-
                 </div>
             </div>
         </div>

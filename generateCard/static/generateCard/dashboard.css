@@ -404,3 +404,7 @@
             border-radius: 5px;
             color: blue;
         }
+
+        .sidebar .log-m{
+            display: none;
+         }

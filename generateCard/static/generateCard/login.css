@@ -1,3 +1,9 @@
+    body{
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
     .form-container{
         display: flex;
         flex-direction: row;
@@ -95,4 +101,47 @@
         font-size: 16px;
         border-radius: 5px;
         color: firebrick;
+    }
+    @media only screen and (max-width: 600px) {
+        body{
+            margin: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container{
+            flex-direction: column;
+        }
+
+        .cover-deco{
+            width: 100%;
+            height: 300px;
+        }
+        .cover-deco img{
+            width: 225px;
+        }
+        .cover-form{
+            width: 100%;
+        }
+        .form-box{
+            width: 100%;
+        }
+
+        .header{
+            padding: 10px;
+            margin-bottom: 0;
+        }
+        .form-css{
+            padding: 10px;
+        }
+
+        .form-css input[type=submit]{
+            -webkit-appearance: none;
+        }
+        .form-box span{
+            padding: 10px;
+        }
+
     }
