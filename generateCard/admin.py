@@ -9,6 +9,7 @@ class CardTypesAdmin(admin.ModelAdmin):
 
 class UserWalletAdmin(admin.ModelAdmin):
     list_display = ('user','wallet')
+    search_fields=['user','wallet']
 
 class CardGeneratedAdmin(admin.ModelAdmin):
     list_display=('card_type','card_holder_user','identify_walletaddress','card_number','card_balance')

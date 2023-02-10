@@ -7,39 +7,29 @@ from django.contrib.auth.models import User
 
 import mysql.connector
 
-def accessUser(email):
+def accessUser():
     db = mysql.connector.connect(host="server07.hostfactory.ch",user="card_wepapp",password="E9ytaGuMAtAMuBUh",database="Token")
 
     cur = db.cursor()
-    cur.execute("select * from users where email='{0}'".format(email))
+    cur.execute("select * from users")
     l = cur.fetchall()
 
     return l
 
 def run():
-    user_wallet = UserWallet.objects.all()
-    u_have = [x.user for x in user_wallet]
+    ico_user = accessUser()
+    ico_email = [x[2] for x in ico_user]
+    ico_wallet = [x[13] for x in ico_user]
+
+    already = UserWallet.objects.all()
 
     auth_u = User.objects.all()
-    print(u_have,"\n")
     for i in auth_u:
-        if i not in u_have:
-            print("not in user wallet",i)
-            new_user = UserWallet()
-            new_user.user = i
-            try:
-                wlt = accessUser(i.email)[0][13]
-                print(wlt)
-                if wlt != None:
-                        
-                    new_user.wallet = wlt
-                    new_user.save()
-                    print("usr saved")
-                else:
-                    new_user.wallet = None
-                    new_user.save()
-                    print("usr saved")
-                    #print("wallet not gound")
-            except:
-                print("Major error")
-                continue
+        if i.email not in ico_email:
+            print(i)
+            n_u = UserWallet()
+            n_u.user = i
+            n_u.wallet = None
+            n_u.save()
+            print("Saved")
+
