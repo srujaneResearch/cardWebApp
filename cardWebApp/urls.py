@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-
+from generateCard.admin import nadmin
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("",include('generateCard.urls'))
+    path("",include('generateCard.urls')),
+    path("nadmin/",nadmin.urls)
 ]

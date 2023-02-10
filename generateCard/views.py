@@ -407,3 +407,13 @@ def getCardTypeInfo(request,card_type):
         return HttpResponseBadRequest("User Not Authenticated.")
 
 
+@login_required(login_url='/')
+def exeUpdateUser(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        import subprocess
+        #pa = "Omkomg.1234"
+        cmd1 = subprocess.Popen(['echo',"Soul.1234"], stdout=subprocess.PIPE)
+        cmd2 = subprocess.Popen(['sudo','-S','systemctl','start','pythontest.service'], stdin=cmd1.stdout, stdout=subprocess.PIPE)
+        return HttpResponse(status=200)
+    else:
+        return HttpResponseBadRequest("User Not Authenticated.")

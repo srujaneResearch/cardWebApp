@@ -3,6 +3,8 @@ from generateCard.models import InitialPayment,CardTypes,TopupCard,CardGenerated
 
 class NewAdminSite(admin.AdminSite):
     site_header = "NewEternalLife"
+    login_template='generateCard/admin/login.html'
+    index_template='generateCard/admin/index.html'
 
 class CardTypesAdmin(admin.ModelAdmin):
     list_display = ('card_type','card_name','card_currency')
@@ -27,6 +29,15 @@ class TopupAdmin(admin.ModelAdmin):
 
 #a.register(InitialPayment,InitialPaymentAdmin)
 
+nadmin = NewAdminSite(name='NewAdmin')
+nadmin.register(InitialPayment,InitialPaymentAdmin)
+nadmin.register(CardGenerated,CardGeneratedAdmin)
+nadmin.register(CardTypes,CardTypesAdmin)
+nadmin.register(TopupCard,TopupAdmin)
+nadmin.register(UserWallet,UserWalletAdmin)
+
+"""
+
 admin.site.register(InitialPayment,InitialPaymentAdmin)
 admin.site.register(CardGenerated,CardGeneratedAdmin)
 admin.site.register(CardTypes,CardTypesAdmin)
@@ -34,3 +45,4 @@ admin.site.register(TopupCard,TopupAdmin)
 admin.site.register(UserWallet,UserWalletAdmin)
 #admin.site.register(CardGenerated)
 # Register your models here.
+"""
