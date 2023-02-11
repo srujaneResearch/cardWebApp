@@ -1,11 +1,11 @@
 import requests
 import mysql.connector
-api_key = "5v6kEHuFS0iaRrXuE8ZTF4jLxDv9BtEMpdlXk967tf7MZi8YnpodsjKgmh7q"
-base_url = "https://sandbox.fcfpay.com/api"
+api_key = "asnaPm3ZbiNFPnVlbUk0BTV7LFe3mUW8w1Bh6l0gANMfSilArk65Fif8ZCXg"
+base_url = "https://merchant.fcfpay.com/api"
 
 def issueCard(name,surname,amount,address_l1,address_l2,city,state,country,zip,card_type,phone='38094098393',email='rakitnik@dolaso.ch'):
     payload={
-        "iframe_id": 31,
+        "iframe_id": 254,
         "surname": surname,
         "name": name,
         "amount": amount,

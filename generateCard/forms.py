@@ -16,7 +16,7 @@ class TopupForm(forms.Form):
                                         ('LTC','Litecoin'),
                                         ('USDT.TRC20','Tether USD'),
                                         ('TRX','TRON'),
-                                        ('LTCT','Litecoin Test')
+                                        #('LTCT','Litecoin Test')
                                         ])
     cpay = forms.CharField(required=True,label="coinpament fee",widget=forms.TextInput(attrs={'placeholder': '0.75% coinpayment fee'}),disabled=True)
 
@@ -45,6 +45,6 @@ class GenerateCardForm(forms.Form):
                                         ('LTC','Litecoin'),
                                         ('USDT.TRC20','Tether USD'),
                                         ('TRX','TRON'),
-                                        ('LTCT','Litecoin Test')
+                                        #('LTCT','Litecoin Test')
                                         ])
     cpayg = forms.CharField(required=True,label="coinpament fee",widget=forms.TextInput(attrs={'placeholder': '0.75% coinpayment fee'}),disabled=True)

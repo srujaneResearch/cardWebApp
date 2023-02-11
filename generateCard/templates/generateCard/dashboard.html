@@ -224,7 +224,7 @@
         let x = document.forms["cgenform"]["amount"].value;
         let c_no =  document.forms["cgenform"]
         x = Number(x)
-        if (isNaN(x) || x <3 || x>5000) {
+        if (isNaN(x) || x <50 || x>5000) {
             alert("Amount must be greater than 50 and less than 5000");
             return false;
         }
@@ -343,7 +343,7 @@
     console.log(c_no);
     
     x = Number(x)
-    if (isNaN(x) || x <3 || x>5000) {
+    if (isNaN(x) || x <50 || x>5000) {
         alert("Amount must be greater than 50 and less than 5000");
         return false;
     }
