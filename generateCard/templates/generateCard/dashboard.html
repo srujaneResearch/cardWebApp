@@ -12,46 +12,7 @@
     <title>Dashboard</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1"name="viewport"/>
     <style>
-        @media only screen and (max-width:830px){
-            body{
-                padding: 5px;
-            }
-            .container{
-                grid-template-columns: 15% 85%;
 
-            }
-            .userDetails{
-                flex-wrap: wrap;
-            }
-
-            .slides{
-                margin: 10px;
-            }
-
-            .gap{
-                margin: 0;
-            }
-
-            .modal-content{
-                width: 90%;
-            
-            }
-
-            .modal-cover{
-                padding: 10px;
-            }
-
-            .modal-cover h1{
-                text-align: center;
-            }
-
-
-
-            .debitCardDetail-wraper{
-                padding-left: 0px;
-                margin-left: 0px;
-            }
-        }
     </style>
 
     </head>
@@ -186,7 +147,9 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <h2>No Card is issued to you</h2>
+                    <div class="token-alert">
+                        <span>No card is issued to you!</span>
+                    </div>
                     {% endif %}
                 </div>
             </div>
