@@ -40,6 +40,7 @@ def run():
                 continue
             else:
                 guser.userwallet.wallet=None
+                guser.userwallet.save()
                 guser.initialpayment_set.update(identify_walletaddress=None)
                 guser.cardgenerated_set.update(identify_walletaddress=None)
                 guser.topupcard_set.update(identify_walletaddress=None)
