@@ -37,6 +37,7 @@ def run():
             print("Wallet is none")
             guser = web_user.get(email=ico_email[i_u])
             if guser.userwallet.wallet == None:
+                guser.userwallet.save()
                 continue
             else:
                 guser.userwallet.wallet=None
@@ -51,6 +52,7 @@ def run():
             try:
                 guser = web_user.get(email=ico_email[i_u])
                 guser.userwallet.wallet=ico_wallet[i_u]
+                guser.userwallet.save()
                 guser.initialpayment_set.update(identify_walletaddress=ico_wallet[i_u])
                 guser.cardgenerated_set.update(identify_walletaddress=ico_wallet[i_u])
                 guser.topupcard_set.update(identify_walletaddress=ico_wallet[i_u])
