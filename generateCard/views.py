@@ -151,6 +151,25 @@ def index(request):
 def singup(request):
     return render(request,'generateCard/signup.html',context={'status':True,'user':False})
 
+def forgot(request):
+    return render(request,'generateCard/forgotpass.html',context={'status':True,'user':False})
+
+def changeUser(request):
+    if request.method == 'POST':
+        email,password = request.POST['email'],request.POST['password']
+        try:
+            k = User.objects.get(username=email)
+            if k.is_active:
+                k.set_password(password)
+                k.save()
+                return render(request,'generateCard/forgotpass.html',context={"status":True,"user":True})
+            else:
+                return render(request,'generateCard/forgotpass.html',context={"status":False,"user":False})
+        except:
+            print("user not exsist")
+            return render(request,'generateCard/signup.html',context={"status":False,"user":False})
+    else:
+        return HttpResponseRedirect('/')
 def register(request):
     if request.method == 'POST':
         email,password = request.POST['email'],request.POST['password']

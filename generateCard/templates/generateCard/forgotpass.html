@@ -18,11 +18,10 @@
 
                 <div class="form-box">
                     <div class="header">
-                        <h1>Sign up.</h1>
-                        <small>Create New EternalLifeToken Account</small>
+                        <small>Forgot Password?</small>
 
                     </div>
-                    <form name ="signupform" class="form-css" method="POST" action="{% url 'register' %}" onsubmit="return validateMe()">
+                    <form name ="forgot" class="form-css" method="POST" action="{% url 'cuser' %}" onsubmit="return validateMe()">
                         {% csrf_token %}
                         <input type="email" required name="email" placeholder="Email"/>
                         
@@ -30,22 +29,16 @@
                         
                         <input type="password" required name="confpassword" placeholder="Confirm Password"/>
                         <br/>
-                        <input type="submit" value="Signup"  class="submit-btn">
-                        <div class="remember-me">
-                            <div>
-                                <span>Already have an account?</span>
-                            </div>
-                            <a href="{% url 'index' %}">Sign in here.</a>
-                        </div>
-                        {% if not status%}
+                        <input type="submit" value="Change Password"  class="submit-btn">
+                        {% if not status %}
                         <div class="auth-alert">
-                            <span>You need to register at our ICO page!.</span>
-                            <a href="https://eternallifetoken.net/public/login" target="_blank">ICO</a>
+                            <span>User not registered! Please sign up here.</span>
+                            <a href="{% url 'signup' %}" target="_blank">Sign up</a>
                         </div>
                         {% endif %}
                         {% if user%}
-                        <div class="auth-alert">
-                            <span>Account already exsist. please sign in.</span>
+                        <div class="auth-alert" style="background-color: yellowgreen;">
+                            <span>Password Changed Successfully!</span>
                         </div>
                         {% endif %}
                     </form>
@@ -67,5 +60,5 @@
     <script>
         document.body.style.height = window.innerHeight+"px";
             //document.body.style.width = window.innerWidth+"px";
-    </script>
+    </script>    
 </html>

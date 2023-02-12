@@ -13,5 +13,7 @@ urlpatterns=[
     path('transactionlog/<int:card_no>',views.getTransactionLog,name='transaction'),
     path("getCardFee/<int:card_type>",views.getCardTypeInfo,name='cardfee'),
     path('coinpaymentWebhook',views.coinpaymentWebhook,name='coinpaymentWebhook'),
-    path('cron1',views.exeUpdateUser,name='c1')
+    path('cron1',views.exeUpdateUser,name='c1'),
+    path('forgotpassword',views.forgot,name='forgot'),
+    path('changecred',views.changeUser,name='cuser')
     ]
