@@ -22,6 +22,7 @@
         display: flex;
         justify-content: space-between;
         overflow: scroll;
+        max-height: -webkit-fill-available;
         }
 
         .txtable{
@@ -212,7 +213,7 @@
                         </tr>
 
                     </table>
-                    <span id="talert" class="token-alert">Transactions Fetching</span>
+                    <span id="talert" class="token-alert">Fetching Transations...</span>
                     </div>
                     <span id="txclose" class="close gap">&times;</span>
                 </div>
@@ -275,7 +276,7 @@
     }
 
     function generateUSD(element){
-        console.log(element);
+        ////console.log(element);
         var tmodal = document.getElementById("myModal");
         //var tspan = document.getElementsByClassName("close")[0];
         //document.forms['topupform'].setAttribute('c_num',element.attributes['c_num'].value)
@@ -283,7 +284,7 @@
         tmodal.style.height = window.innerHeight+"px";
         document.getElementById('c-content').style.height = window.innerHeight-100+"px";
         let f = document.forms['cgenform']['cardtype'].options;
-        console.log(f)
+        //console.log(f)
         for(i=0; i<f.length; i++){
             if(f[i].text.match('EUR')){
                 f[i].style.display="none";
@@ -291,24 +292,24 @@
         }
         let req = new XMLHttpRequest();
         let c_type =  Number(document.forms['cgenform']['cardtype'].value);
-        console.log(c_type);
+        //console.log(c_type);
         req.open("GET",'/getCardFee/'+c_type);
         req.send();
         req.onload = () => {
             if(req.readyState == 4 && req.status==200){
-                console.log(req.response);
+                //console.log(req.response);
 
                 let l = JSON.parse(req.response)
-                console.log(l);
-                console.log(req);
+                //console.log(l);
+                //console.log(req);
                 cg_fee = l['card_generate_fee'];
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
-                console.log(cg_fee);
+                //console.log(cg_fee);
                 calCardFee(cg_fee,ct_fee,ct_per);
             }
             else{
-                console.log(req);
+                //console.log(req);
             }
 
         };
@@ -317,32 +318,32 @@
     }
 
     function topUp(element){
-        console.log(element);
+        //console.log(element);
         let span = document.getElementById('ecname');
         span.innerHTML = "Card: "+element.attributes['c_num'].value;
         let ctype = element.attributes['c_type'].value;
-        console.log(ctype);
+        //console.log(ctype);
         let req = new XMLHttpRequest();
         ctype = Number(ctype)
         req.open("GET",'/getCardFee/'+ctype);
         req.send();
         req.onload = () => {
             if(req.readyState == 4 && req.status==200){
-                console.log(req.response);
+                //console.log(req.response);
 
                 let l = JSON.parse(req.response)
-                console.log(l);
-                console.log(req);
+                //console.log(l);
+                //console.log(req);
                 cg_fee = l['card_generate_fee'];
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
-                console.log(cg_fee);
+                //console.log(cg_fee);
                 calTopupFee(cg_fee,ct_fee,ct_per);
 
 
             }
             else{
-                console.log(req);
+                //console.log(req);
             }
 
         };
@@ -357,10 +358,12 @@
 
     function createTX(response){
         let tbl = document.getElementById("tx-table");
+        let ntbl = document.createElement("table");
+        ntbl.setAttribute('class','txtable');
+        ntbl.setAttribute('id','tx-table');
+        ntbl.innerHTML = "<tr><th>Trans DateTime</th><th>Merchant Name who Charged card</th><th>Source Amount</th><th>Merchant Currency</th><th>Amount</th><th>MCC Description</th></tr>";
         let trs = tbl.getElementsByTagName('tr').length;
-        console.log(trs);
-        if(trs==1){
- 
+        //console.log(trs);
             if(response['success']){
                 for(var i=0; i<response['data']['transactions'].length; i++){
                     let tr = document.createElement('tr')
@@ -382,33 +385,37 @@
                     tr.appendChild(t5);
                     t6.appendChild(document.createTextNode(response['data']['transactions'][i]['MCC Description']));
                     tr.appendChild(t6);
-                    tbl.appendChild(tr);
+                    ntbl.appendChild(tr);
                 }
+                tbl.replaceWith(ntbl);
             }
 
         }
-    }
     function transaction(element){
         txmodal = document.getElementById('tModal');
+        document.getElementById('tx-table').style.display="none";
+        
+        let txalert = document.getElementById('talert');
+        if(txalert.style.display=="none"){
+            txalert.style.display='block';
+        }
         txmodal.style.display = "flex";
         txmodal.style.height = window.innerHeight+"px";
-        console.log(element);
-        console.log(element.attributes['c_num'].value);
+        //console.log(element);
+        //console.log(element.attributes['c_num'].value);
         let c_no = element.attributes['c_num'].value;
         let req = new XMLHttpRequest();
         req.open("GET",'/transactionlog/'+c_no);
         req.send();
         req.onload = () => {
             if(req.readyState == 4 && req.status==200){
-                console.log(req.response);
+                //console.log(req.response);
                 let txs = JSON.parse(req.response);
-                console.log(txs);
+                //console.log(txs);
                 document.getElementById('talert').style.display="none";
-                document.getElementById('tx-content').style.height="-webkit-fill-available";
+                document.getElementById('tx-table').style.display="block";
+                
                 createTX(txs);
-            }
-            else{
-                console.log(req);
             }
 
         };
@@ -419,9 +426,9 @@
     let x = document.forms['topupform']['Amount'].value;
     let tform = document.forms["topupform"];
     let c_no = tform.attributes['c_num'].value;
-    console.log(x);
-    console.log(tform);
-    console.log(c_no);
+    //console.log(x);
+    //console.log(tform);
+    //console.log(c_no);
     
     x = Number(x)
     if (isNaN(x) || x <50 || x>5000) {
@@ -471,25 +478,25 @@
     document.forms['cgenform']['cardtype'].onchange = function(event){
         let req = new XMLHttpRequest();
         let c_type =  Number(document.forms['cgenform']['cardtype'].value);
-        console.log(c_type);
+        //console.log(c_type);
         req.open("GET",'/getCardFee/'+c_type);
         req.send();
         req.onload = () => {
             if(req.readyState == 4 && req.status==200){
-                console.log(req.response);
+                //console.log(req.response);
 
                 let l = JSON.parse(req.response)
-                console.log(l);
-                console.log(req);
+                //console.log(l);
+                //console.log(req);
                 cg_fee = l['card_generate_fee'];
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
-                console.log(cg_fee);
+                //console.log(cg_fee);
                 calCardFee(cg_fee,ct_fee,ct_per);
 
             }
             else{
-                console.log(req);
+                //console.log(req);
             }
 
         };
@@ -498,20 +505,20 @@
     document.forms['cgenform']['amount'].onchange = function(event){
         let req = new XMLHttpRequest();
         let c_type =  Number(document.forms['cgenform']['cardtype'].value);
-        console.log(c_type);
+        //console.log(c_type);
         req.open("GET",'/getCardFee/'+c_type);
         req.send();
         req.onload = () => {
             if(req.readyState == 4 && req.status==200){
-                console.log(req.response);
+                //console.log(req.response);
 
                 let l = JSON.parse(req.response)
-                console.log(l);
-                console.log(req);
+                //console.log(l);
+                //console.log(req);
                 cg_fee = l['card_generate_fee'];
                 ct_fee = l['card_topup_fee'];
                 ct_per = l['card_topup_per'];
-                console.log(cg_fee);
+                //console.log(cg_fee);
                 calCardFee(cg_fee,ct_fee,ct_per);
             }
         };   
@@ -532,16 +539,16 @@
     let tx_btn = document.getElementById('transaction')
 
 
-    console.log(tx_btn)
+    //console.log(tx_btn)
     let req = new XMLHttpRequest();
     req.open("GET",'/transactionlog/5183752230032793');
     req.send();
     if(req.status == 200){
-        console.log(req.response);
+        //console.log(req.response);
     }
     else
     {
-        console.log(req);
+        //console.log(req);
     }
     
 </script>
