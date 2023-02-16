@@ -12,6 +12,32 @@
     <title>Dashboard</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1"name="viewport"/>
     <style>
+        .modal-content-tx{
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        margin: 20px;
+        display: flex;
+        justify-content: space-between;
+        overflow: scroll;
+        }
+
+        .txtable{
+            border-collapse: collapse;
+            font-family: Noto Sans, sans-serif;
+        }
+        .txtable th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        .txtable th{
+            background-color: lavender;
+        }
+
+        .txtable tr:nth-child(odd) {background-color: lavenderblush;}
+
 
     </style>
 
@@ -173,8 +199,22 @@
         </div>
         <div id="tModal" class="modal">
             <!-- Modal content -->
-                <div class="modal-content">
-                    <span class="close gap">&times;</span>
+                <div id ="tx-content" class="modal-content-tx">
+                    <div>
+                    <table id="tx-table" class="txtable">
+                        <tr>
+                            <th>Trans DateTime</th>
+                            <th>Merchant Name who Charged card</th>
+                            <th>Source Amount</th>
+                            <th>Merchant Currency</th>
+                            <th>Amount</th>
+                            <th>MCC Description</th>
+                        </tr>
+
+                    </table>
+                    <span id="talert" class="token-alert">Transactions Fetching</span>
+                    </div>
+                    <span id="txclose" class="close gap">&times;</span>
                 </div>
         </div>
 
@@ -315,7 +355,43 @@
         tmodal.style.height = window.innerHeight+"px";
     }
 
+    function createTX(response){
+        let tbl = document.getElementById("tx-table");
+        let trs = tbl.getElementsByTagName('tr').length;
+        console.log(trs);
+        if(trs==1){
+ 
+            if(response['success']){
+                for(var i=0; i<response['data']['transactions'].length; i++){
+                    let tr = document.createElement('tr')
+                    let t1 = document.createElement('td')
+                    let t2 = document.createElement('td')
+                    let t3 = document.createElement('td')
+                    let t4 = document.createElement('td')
+                    let t5 = document.createElement('td')
+                    let t6 = document.createElement('td')
+                    t1.appendChild(document.createTextNode(response['data']['transactions'][i]['Trans DateTime']));
+                    tr.appendChild(t1);
+                    t2.appendChild(document.createTextNode(response['data']['transactions'][i]['Merchant Name who Charged card']));
+                    tr.appendChild(t2);
+                    t3.appendChild(document.createTextNode(response['data']['transactions'][i]['Source Amount']));
+                    tr.appendChild(t3)
+                    t4.appendChild(document.createTextNode(response['data']['transactions'][i]['Merchant Currency']));
+                    tr.appendChild(t4);
+                    t5.appendChild(document.createTextNode(response['data']['transactions'][i]['Amount']));
+                    tr.appendChild(t5);
+                    t6.appendChild(document.createTextNode(response['data']['transactions'][i]['MCC Description']));
+                    tr.appendChild(t6);
+                    tbl.appendChild(tr);
+                }
+            }
+
+        }
+    }
     function transaction(element){
+        txmodal = document.getElementById('tModal');
+        txmodal.style.display = "flex";
+        txmodal.style.height = window.innerHeight+"px";
         console.log(element);
         console.log(element.attributes['c_num'].value);
         let c_no = element.attributes['c_num'].value;
@@ -325,6 +401,11 @@
         req.onload = () => {
             if(req.readyState == 4 && req.status==200){
                 console.log(req.response);
+                let txs = JSON.parse(req.response);
+                console.log(txs);
+                document.getElementById('talert').style.display="none";
+                document.getElementById('tx-content').style.height="-webkit-fill-available";
+                createTX(txs);
             }
             else{
                 console.log(req);
@@ -365,6 +446,10 @@
         document.getElementById("myModal").style.display="none";
     }
 
+    document.getElementById("txclose").onclick = function(event){
+        document.getElementById("tModal").style.display="none";
+    }
+
     document.getElementById('t-span').onclick = function(event){
         document.getElementById('topup-modal').style.display="none";
     }
@@ -376,7 +461,9 @@
             if(document.getElementById('topup-modal').style.display == 'flex'){
                 document.getElementById('topup-modal').style.display = 'none';
             } 
-        
+            if(document.getElementById('tModal').style.display == 'flex'){
+                document.getElementById('tModal').style.display = 'none';
+            } 
         //event.target.style.display = "none";
       }
     }

@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-^tlzt*$o$jpq-06g4gig-l@h(_v74mr%*zp!!vp*pyzlvyn3zl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['eternalcard.net','www.eternalcard.net','65.109.207.0']
+ALLOWED_HOSTS = ['eternalcard.net','www.eternalcard.net','65.109.207.0','127.0.0.1']
 
 
 # Application definition
