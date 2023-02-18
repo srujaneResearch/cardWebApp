@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-^tlzt*$o$jpq-06g4gig-l@h(_v74mr%*zp!!vp*pyzlvyn3zl"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['eternalcard.net','www.eternalcard.net','65.109.207.0','127.0.0.1']
 
@@ -130,3 +130,7 @@ STATIC_ROOT = os.path.join(BASE_DIR,'static')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+EMAIL_HOST = "server06.hostfactory.ch"
+EMAIL_PORT="587"
+EMAIL_HOST_USER="card@neweternallife.net"
+EMAIL_HOST_PASSWORD= "YTa9YVEzAXeG"

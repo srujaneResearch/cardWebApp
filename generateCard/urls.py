@@ -15,5 +15,7 @@ urlpatterns=[
     path('coinpaymentWebhook',views.coinpaymentWebhook,name='coinpaymentWebhook'),
     path('cron1',views.exeUpdateUser,name='c1'),
     path('forgotpassword',views.forgot,name='forgot'),
-    path('changecred',views.changeUser,name='cuser')
+    path('changecred',views.changeUser,name='cuser'),
+    path('account-recovery/<str:sessiond>',views.passChangeView,name='accrecover'),
+    path('account-reset-done/<str:sessiond>',views.accResetView,name='resetconfirm'),
     ]

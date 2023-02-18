@@ -18,29 +18,27 @@
 
                 <div class="form-box">
                     <div class="header">
-                        <small>Forgot Password?</small>
+                        <small>Reset Your Password</small>
 
                     </div>
-                    <form name ="forgot" class="form-css" method="POST" action="{% url 'cuser' %}" onsubmit="return validateMe()">
+                    <form name ="forgot" class="form-css" method="POST" action="{% url 'resetconfirm' sess %}" onsubmit="return validateMe()">
                         {% csrf_token %}
-                        <input type="email" required name="email" placeholder="Email"/>
-                        <!--
+                        
                         <input type="password" required name="password" placeholder="New Password"/>
                         
                         <input type="password" required name="confpassword" placeholder="Confirm Password"/>
-                        <br/> -->
+                        <br/>
                         <input type="submit" value="Change Password"  class="submit-btn">
-                        {% if not status %}
+                        {% if status %}
                         <div class="auth-alert">
-                            <span>User not registered! Please sign up here.</span>
-                            <a href="{% url 'signup' %}" target="_blank">Sign up</a>
+                            <span>Password reset is successful.</span>
                         </div>
                         {% endif %}
-                        {% if req%}
-                        <div class="auth-alert" style="background-color: yellowgreen;">
-                            <span>Check your email to change password!</span>
+                        {% if expiry %}
+                        <div class="auth-alert">
+                            <span>Your session is expired!</span>
                         </div>
-                        {% endif %}
+                        {% endif %}                        
 
                     </form>
                 </div>

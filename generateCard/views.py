@@ -10,12 +10,14 @@ from django.contrib.auth.decorators import login_required
 import mysql.connector
 from django.contrib.auth.models import User
 from generateCard import card
-from generateCard.models import CardGenerated,CardTypes,TopupCard,UserWallet,InitialPayment
+from generateCard.models import CardGenerated,CardTypes,TopupCard,UserWallet,InitialPayment,AuthTokens
 from generateCard import forms
 from django.views.decorators.csrf import csrf_exempt
 from generateCard import pyCoinpayments
-from datetime import datetime
+from datetime import datetime,timedelta
+from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
+from cardWebApp.settings import ALLOWED_HOSTS
 coin_pub = "d9c1815b8809bc4627561eda3a185528645f7bbe57ed97f94b3e8e1a78a03ca5"
 coin_pvt = "F3Daf74154b0597Cf8cB69eEb0A782f85D0cdfE7a4644dAAdeD655987Ec27866"
 
@@ -151,20 +153,89 @@ def index(request):
 def singup(request):
     return render(request,'generateCard/signup.html',context={'status':True,'user':False})
 
+
 def forgot(request):
-    return render(request,'generateCard/forgotpass.html',context={'status':True,'user':False})
+    return render(request,'generateCard/forgotpass.html',context={'status':True,'req':False})
+
+#session protected view
+def passChangeView(request,sessiond):
+    try:
+        uget = AuthTokens.objects.get(token=sessiond)
+        return render(request,'generateCard/recoverpass.html',context={'sess':sessiond,'status':False,'expiry':False})
+    except:
+        print("No user")
+        return HttpResponseBadRequest("Invalid request!")
+
+def accResetView(request,sessiond):
+    if request.method == 'POST':
+        password = request.POST['password']
+        try:
+            uget = AuthTokens.objects.get(token=sessiond)
+            usr = User.objects.get(username=uget.user.username)
+            import pytz
+            utc = pytz.UTC
+            if uget.status == True and utc.localize(datetime.now()) < uget.expiry:
+                usr.set_password(password)
+                usr.save()
+                uget.status=False
+                uget.save()
+                print("Password reset successful.")
+                return render(request,'generateCard/recoverpass.html',context={'sess':sessiond,'status':True,"expiry":False})
+            else:
+                uget.status=False
+                uget.save()
+                print("session expired")
+                return render(request,'generateCard/recoverpass.html',context={'sess':sessiond,'status':False,"expiry":True})
+        except:
+            print("user not exsist")
+            return HttpResponseRedirect('/')
+    else:
+        return HttpResponseRedirect('/')
+    
+    
+
+def createPasswordToken(usr):
+    try:
+        uget = AuthTokens.objects.get(user=usr)
+        import uuid
+        tkn = str(uuid.uuid4())
+        uget = AuthTokens.objects.get(user=usr)
+        uget.status = True
+        uget.token = tkn
+        uget.date_requested = datetime.now()
+        uget.expiry = datetime.now()+timedelta(minutes=30)
+        uget.save()
+        subject="PASSWORD RESET REQUEST | ETERNALCARD"
+        msg="click on below link to change your password. Link is valid only for 30 minutes.\n\n{0}".format("https://"+ALLOWED_HOSTS[0]+"/account-recovery/"+tkn)
+        send_mail(subject=subject,message=msg,from_email="card@neweternallife.net",recipient_list=[usr.email])
+        #return tkn       
+    except:
+        import uuid
+        tkn = str(uuid.uuid4())
+        uget = AuthTokens()
+        uget.user = usr
+        uget.status = True
+        uget.token = tkn
+        uget.date_requested = datetime.now()
+        uget.expiry = datetime.now()+timedelta(minutes=30)
+        uget.save()
+        subject="PASSWORD RESET REQUEST | ETERNALCARD"
+        msg="click on below link to change your password. Link is valid only for 30 minutes.\n\n{0}".format(tkn)
+        send_mail(subject=subject,message=msg,from_email="card@neweternallife.net",recipient_list=[usr.email])
+        #return tkn
+
 
 def changeUser(request):
     if request.method == 'POST':
-        email,password = request.POST['email'],request.POST['password']
+        email= request.POST['email']
         try:
             k = User.objects.get(username=email)
             if k.is_active:
-                k.set_password(password)
-                k.save()
-                return render(request,'generateCard/forgotpass.html',context={"status":True,"user":True})
+                print("active")
+                createPasswordToken(k)
+                return render(request,'generateCard/forgotpass.html',context={"status":True,"req":True})
             else:
-                return render(request,'generateCard/forgotpass.html',context={"status":False,"user":False})
+                return render(request,'generateCard/forgotpass.html',context={"status":False,"req":False})
         except:
             print("user not exsist")
             return render(request,'generateCard/signup.html',context={"status":False,"user":False})

@@ -102,6 +102,12 @@ class TopupCard(models.Model):
     timestamp_initiated = models.DateTimeField(auto_now_add=True)
     timestamp_finished = models.DateTimeField(null=True,blank=True)
 
+class AuthTokens(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    date_requested = models.DateTimeField()
+    expiry = models.DateTimeField()
+    status = models.BooleanField()
+    token =  models.CharField(max_length=255)
 
 
 # Create your models here.
