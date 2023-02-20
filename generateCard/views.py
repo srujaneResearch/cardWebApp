@@ -220,7 +220,7 @@ def createPasswordToken(usr):
         uget.expiry = datetime.now()+timedelta(minutes=30)
         uget.save()
         subject="PASSWORD RESET REQUEST | ETERNALCARD"
-        msg="click on below link to change your password. Link is valid only for 30 minutes.\n\n{0}".format(tkn)
+        msg="click on below link to change your password. Link is valid only for 30 minutes.\n\n{0}".format("https://"+ALLOWED_HOSTS[0]+"/account-recovery/"+tkn)
         send_mail(subject=subject,message=msg,from_email="card@neweternallife.net",recipient_list=[usr.email])
         #return tkn
 
