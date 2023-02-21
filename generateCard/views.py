@@ -403,19 +403,20 @@ def check2FA(request,sessiond):
 
             #-----------status true and time left, otp wrong-------------
             elif uget.status == True and utc.localize(datetime.now()) < uget.expiry and uget.otp!=int(password) and uget.attempt<=3:
+                
+                if uget.attempt == 3:
+                    uget.attempt=uget.attempt+1
+                    aleft = 3-uget.attempt
+                    uget.status=False
+                    uget.block = True
+                    uget.block_time_over = datetime.now()+timedelta(minutes=15)
+                    uget.save()                    
+                    return render(request,'generateCard/onetime.html',context={'sess':sessiond,'status':False,"attempt":-1})
+                                    
                 uget.attempt=uget.attempt+1
                 aleft = 3-uget.attempt
                 uget.save()
-                return render(request,'generateCard/onetime.html',context={'sess':sessiond,'status':False,"attempt":aleft})
-
-            elif uget.attempt > 3:
-                uget.status=False
-                uget.block = True
-                uget.block_time_over = datetime.now()+timedelta(minutes=15)
-                uget.save()
-                sendBlockEmail(uget.user.email)
-                print("session expired")
-                return render(request,'generateCard/onetime.html',context={'sess':sessiond,'status':True,"attempt":-1})                
+                return render(request,'generateCard/onetime.html',context={'sess':sessiond,'status':False,"attempt":aleft})          
             else:
                 uget.status=False
                 uget.save()
