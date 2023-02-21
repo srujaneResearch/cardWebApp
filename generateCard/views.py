@@ -149,7 +149,7 @@ def coinpaymentWebhook(request):
 def index(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/dashboard')    
-    return render(request, 'generateCard/login.html',context={'active':True,'status':True,'ico':True})
+    return render(request, 'generateCard/login.html',context={'active':True,'status':True,'ico':True,'block':False})
 
 def singup(request):
     if request.user.is_authenticated:
@@ -348,7 +348,7 @@ def loginAuth(request):
             try:
                 uget = User.objects.get(username=username)
                 if not uget.is_active:
-                    return render(request,'generateCard/login.html',context={'active':False,'status':True,'ico':True})
+                    return render(request,'generateCard/login.html',context={'active':False,'status':True,'ico':True,'block':False})
                 else:
                     user = authenticate(username=username,password=password)
                     print(user)
@@ -359,10 +359,10 @@ def loginAuth(request):
                         return HttpResponseRedirect(reverse('2fa',args=(tkn,)))
                     else:
                         print("not")
-                        status = False
+                        status = True
                         ico=True
                         active=True
-                        return render(request,'generateCard/login.html',context={'active':active,'status':status,'ico':ico})
+                        return render(request,'generateCard/login.html',context={'active':active,'status':status,'ico':ico,'block':True})
 
             except ObjectDoesNotExist:
                 print("error")

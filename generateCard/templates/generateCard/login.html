@@ -45,6 +45,11 @@
                             <a href="{% url 'signup'%}">Sign up</a>
                         </div>
                         {% endif %}
+                        {% if block %}
+                        <div class="auth-alert">
+                            <span>Your account is blocked for 15 minutes!</span>
+                        </div>
+                        {% endif %}
                     </form>
                     <span>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></span>
                 </div>
