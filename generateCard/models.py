@@ -109,5 +109,16 @@ class AuthTokens(models.Model):
     status = models.BooleanField()
     token =  models.CharField(max_length=255)
 
+class TwoFAAuth(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    date_requested = models.DateTimeField()
+    expiry = models.DateTimeField()
+    status = models.BooleanField()
+    token = models.CharField(max_length=255)
+    otp = models.IntegerField()
+    attempt = models.IntegerField()
+    block = models.BooleanField(default=False)
+    block_time_over = models.DateTimeField(blank=True,null=True)
+
 
 # Create your models here.

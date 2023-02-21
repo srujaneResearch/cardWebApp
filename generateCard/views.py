@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 import mysql.connector
 from django.contrib.auth.models import User
 from generateCard import card
-from generateCard.models import CardGenerated,CardTypes,TopupCard,UserWallet,InitialPayment,AuthTokens
+from generateCard.models import CardGenerated,CardTypes,TopupCard,UserWallet,InitialPayment,AuthTokens,TwoFAAuth
 from generateCard import forms
 from django.views.decorators.csrf import csrf_exempt
 from generateCard import pyCoinpayments
@@ -18,9 +18,10 @@ from datetime import datetime,timedelta
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from cardWebApp.settings import ALLOWED_HOSTS
+from django.urls import reverse
 coin_pub = "d9c1815b8809bc4627561eda3a185528645f7bbe57ed97f94b3e8e1a78a03ca5"
 coin_pvt = "F3Daf74154b0597Cf8cB69eEb0A782f85D0cdfE7a4644dAAdeD655987Ec27866"
-
+import pytz
 def accessUser(email):
     db = mysql.connector.connect(host="server07.hostfactory.ch",user="card_wepapp",password="E9ytaGuMAtAMuBUh",database="Token")
 
@@ -151,10 +152,14 @@ def index(request):
     return render(request, 'generateCard/login.html',context={'active':True,'status':True,'ico':True})
 
 def singup(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('dashboard'))
     return render(request,'generateCard/signup.html',context={'status':True,'user':False})
 
 
 def forgot(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('dashboard'))
     return render(request,'generateCard/forgotpass.html',context={'status':True,'req':False})
 
 #session protected view
@@ -165,14 +170,13 @@ def passChangeView(request,sessiond):
     except:
         print("No user")
         return HttpResponseBadRequest("Invalid request!")
-
+#session protected view
 def accResetView(request,sessiond):
     if request.method == 'POST':
         password = request.POST['password']
         try:
             uget = AuthTokens.objects.get(token=sessiond)
             usr = User.objects.get(username=uget.user.username)
-            import pytz
             utc = pytz.UTC
             if uget.status == True and utc.localize(datetime.now()) < uget.expiry:
                 usr.set_password(password)
@@ -188,9 +192,9 @@ def accResetView(request,sessiond):
                 return render(request,'generateCard/recoverpass.html',context={'sess':sessiond,'status':False,"expiry":True})
         except:
             print("user not exsist")
-            return HttpResponseRedirect('/')
+            return HttpResponseBadRequest("Invalid Request")
     else:
-        return HttpResponseRedirect('/')
+        return HttpResponseBadRequest("Invalid request!")
     
     
 
@@ -226,6 +230,9 @@ def createPasswordToken(usr):
 
 
 def changeUser(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('dashboard'))
+
     if request.method == 'POST':
         email= request.POST['email']
         try:
@@ -241,7 +248,10 @@ def changeUser(request):
             return render(request,'generateCard/signup.html',context={"status":False,"user":False})
     else:
         return HttpResponseRedirect('/')
+
 def register(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('dashboard'))    
     if request.method == 'POST':
         email,password = request.POST['email'],request.POST['password']
         try:
@@ -260,7 +270,69 @@ def register(request):
         login(request,k)
         return HttpResponseRedirect('/dashboard')         
     else:
-        return HttpResponseRedirect('/')
+        return HttpResponseBadRequest("Invalid request")
+
+
+def create2FACode(usr):
+    try:
+        import uuid
+        tkn = str(uuid.uuid4())
+        uget = TwoFAAuth.objects.get(user=usr)
+        uget.status = True
+        uget.token = tkn
+        uget.date_requested = datetime.now()
+        uget.expiry = datetime.now()+timedelta(minutes=30)
+        import random
+        otp = random.randint(100000,999999)
+        uget.otp = otp
+        uget.attempt=1
+        uget.save()
+        subject="OTP FOR LOGIN | ETERNALCARD"
+        msg="One time password for login is.\n\n{0}".format(otp)
+        send_mail(subject=subject,message=msg,from_email="card@neweternallife.net",recipient_list=[usr.email])
+        return tkn       
+    except:
+        import uuid
+        tkn = str(uuid.uuid4())
+        uget = TwoFAAuth()
+        uget.user = usr
+        uget.status = True
+        uget.token = tkn
+        uget.date_requested = datetime.now()
+        uget.expiry = datetime.now()+timedelta(minutes=30)
+        import random
+        otp = random.randint(100000,999999)
+        uget.otp = otp
+        uget.attempt=1
+        uget.save()
+        subject="OTP FOR LOGIN | ETERNALCARD"
+        msg="One time password for login is.\n\n{0}".format(otp)
+        send_mail(subject=subject,message=msg,from_email="card@neweternallife.net",recipient_list=[usr.email])
+        return tkn
+
+def sendBlockEmail(eml):
+    subject="[ Action Required ] | ETERNALCARD"
+    msg="Your account is blocked for 15 minutes after 3 unsuccessful password attempts!"
+    send_mail(subject=subject,message=msg,from_email="card@neweternallife.net",recipient_list=[eml])    
+
+
+def check2FaBlock(usr):
+    try:
+        uget = TwoFAAuth.objects.get(user=usr)
+        if uget.block:
+            utc=pytz.UTC
+            if utc.localize(datetime.now())>uget.block_time_over:
+                uget.block = False
+                uget.save()
+                return False
+            else:
+                return True
+        else:
+            return False
+    except:
+        print("2fa block check error")
+        return False
+
 
 def loginAuth(request):
     print(request.POST,'\n\n',request)
@@ -280,10 +352,11 @@ def loginAuth(request):
                 else:
                     user = authenticate(username=username,password=password)
                     print(user)
-                    if user is not None:
-                        print("login complete")
-                        login(request,user)
-                        return HttpResponseRedirect('/dashboard')
+                    if user is not None and (not check2FaBlock(uget)):
+                        print("2FA")
+                        #login(request,user)
+                        tkn = create2FACode(uget)
+                        return HttpResponseRedirect(reverse('2fa',args=(tkn,)))
                     else:
                         print("not")
                         status = False
@@ -294,6 +367,65 @@ def loginAuth(request):
             except ObjectDoesNotExist:
                 print("error")
                 return render(request,'generateCard/signup.html',context={'status':False,'user':False})
+    else:
+        return HttpResponseBadRequest("Invalid Request")
+
+def OTPView(request,sessiond):
+    if request.user.is_authenticated:
+        print("Dashboard")
+        return HttpResponseRedirect('/dashboard')
+    else:
+        print("onetime")
+        return render(request,'generateCard/onetime.html',context={"status":True,"attempt":3,'sess':sessiond})
+
+def check2FA(request,sessiond):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('dashboard'))
+    if request.method == 'POST':
+        password = request.POST['password']
+        print(password)
+        try:
+            uget = TwoFAAuth.objects.get(token=sessiond)
+            usr = User.objects.get(username=uget.user.username)
+            utc = pytz.UTC
+            #-----------session expiry-------------
+            if uget.status == False:
+                return HttpResponseBadRequest("Session Expired!")
+            
+            #-----------status True and time left and otp right-------------
+            elif uget.status == True and utc.localize(datetime.now()) < uget.expiry and uget.otp==int(password):
+                login(request,usr)
+                uget.status=False
+                uget.save()
+                print("login complete")
+                return HttpResponseRedirect(reverse('dashboard'))
+            #-----------status true, time exceeds and otp true-------------
+
+            #-----------status true and time left, otp wrong-------------
+            elif uget.status == True and utc.localize(datetime.now()) < uget.expiry and uget.otp!=int(password) and uget.attempt<=3:
+                uget.attempt=uget.attempt+1
+                aleft = 3-uget.attempt
+                uget.save()
+                return render(request,'generateCard/onetime.html',context={'sess':sessiond,'status':False,"attempt":aleft})
+
+            elif uget.attempt > 3:
+                uget.status=False
+                uget.block = True
+                uget.block_time_over = datetime.now()+timedelta(minutes=15)
+                uget.save()
+                sendBlockEmail(uget.user.email)
+                print("session expired")
+                return render(request,'generateCard/onetime.html',context={'sess':sessiond,'status':True,"attempt":-1})                
+            else:
+                uget.status=False
+                uget.save()
+                print("session expired")
+                return HttpResponseBadRequest("Session Expired!")
+        except:
+            print("user not exsist")
+            return HttpResponseRedirect('/')
+    else:
+        return HttpResponseBadRequest("Invalid Request")
 
 def logoutAuth(request):
     if request.user.is_authenticated:

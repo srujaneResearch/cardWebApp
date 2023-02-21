@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% load static %}
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+        <link rel="stylesheet" href="{% static 'generateCard/login.css' %}"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+        <title>NewEternalLife</title>
+    </head>
+    <body>
+        <div class="form-container">
+            <div class="cover-deco">
+                <img src="{% static 'generateCard/images/nelcard.png' %}"/>
+
+            </div>
+            <div class="cover-form">
+
+                <div class="form-box">
+                    <div class="header">
+                        <b>Two-factor authentication, Please check your email for one time password.</b><br/>
+                        <small>Enter OTP</small>
+                    </div>
+                    <form name ="forgot" class="form-css" method="POST" action="{% url '2faauth' sess %}" onsubmit="return validateMe()">
+                        {% csrf_token %}
+                        <input type="password" required name="password" placeholder="OTP"/>
+                        <!--
+                        <input type="password" required name="password" placeholder="New Password"/>
+                        
+                        <input type="password" required name="confpassword" placeholder="Confirm Password"/>
+                        <br/> -->
+                        <input type="submit" value="submit"  class="submit-btn">
+                        {% if not status %}
+                        <div class="auth-alert">
+                            <span>Wrong OTP. You have left {{ attempt|add:"1" }}, After that your account will be blocked!</span>
+                            
+                        </div>
+                        {% endif %}
+                        {% if attempt == -1 %}
+                        <div class="auth-alert">
+                            <span>Your account is blocked for 15 minutes.</span>
+                        </div>
+                        {% endif %}
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script>
+        function validateMe(){
+            let f1 = document.forms['signupform']['password'].value;
+            let f2 = document.forms['signupform']['confpassword'].value;
+            if(f1 != f2){
+                alert("Password doesnot matched!");
+                return false;
+            }
+        }
+    </script>
+    <script>
+        document.body.style.height = window.innerHeight+"px";
+            //document.body.style.width = window.innerWidth+"px";
+    </script>    
+</html>

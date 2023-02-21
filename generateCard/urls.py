@@ -17,5 +17,7 @@ urlpatterns=[
     path('forgotpassword',views.forgot,name='forgot'),
     path('changecred',views.changeUser,name='cuser'),
     path('account-recovery/<str:sessiond>',views.passChangeView,name='accrecover'),
+    path('account-2FA-secure/<str:sessiond>',views.OTPView,name='2fa'),
+    path('account-secure-2FA-complete/<str:sessiond>',views.check2FA,name='2faauth'),
     path('account-reset-done/<str:sessiond>',views.accResetView,name='resetconfirm'),
     ]
