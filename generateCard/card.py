@@ -15,7 +15,7 @@ def issueCard(name,surname,amount,address_l1,address_l2,city,state,country,zip,c
         "state": state,
         "country":country,
         "zip":zip,
-        "phone":"38094098393",
+        "phone":2766818928,
         "email":"rakitnik@dolaso.ch",
         "card_type": card_type,
         }
