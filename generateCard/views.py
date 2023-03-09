@@ -17,6 +17,7 @@ from generateCard import pyCoinpayments
 from datetime import datetime,timedelta
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
+
 from cardWebApp.settings import ALLOWED_HOSTS
 from django.urls import reverse
 coin_pub = "d9c1815b8809bc4627561eda3a185528645f7bbe57ed97f94b3e8e1a78a03ca5"

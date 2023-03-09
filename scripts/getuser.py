@@ -1,7 +1,7 @@
 
 from generateCard.models import UserWallet
 from django.contrib.auth.models import User
-
+from django.db import IntegrityError
 import mysql.connector
 
 
@@ -23,12 +23,16 @@ def run():
 
 
     for i_u in ico_email:
-        if i_u not in w_email:
-            print(i_u)
-            new_user = User.objects.create_user(username=i_u,email=i_u,password="")
-            new_user.is_active = False
-            new_user.save()
-            u = UserWallet()
-            u.user = new_user
-            u.wallet = ico_wallet[ico_email.index(i_u)]
-            u.save()
+        try:
+            if i_u not in w_email:
+                print(i_u)
+                new_user = User.objects.create_user(username=i_u,email=i_u,password="")
+                new_user.is_active = False
+                new_user.save()
+                u = UserWallet()
+                u.user = new_user
+                u.wallet = ico_wallet[ico_email.index(i_u)]
+                u.save()
+        except IntegrityError:
+            print("Integrity Error For User",i_u)
+            continue
