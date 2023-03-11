@@ -24,7 +24,7 @@ class UserWallet(models.Model):
 
 class InitialPayment(models.Model):
     user =  models.ForeignKey(User,on_delete=models.CASCADE)
-    identify_walletaddress = models.CharField(max_length=255)
+    identify_walletaddress = models.CharField(max_length=255,null=True)
     amount = models.IntegerField(validators=[MinValueValidator(50),MaxValueValidator(5000)])
     payment_amount = models.FloatField()
     coinpayment_fees = models.FloatField(default=0.75)
@@ -56,7 +56,7 @@ class InitialPayment(models.Model):
 class CardGenerated(models.Model):
     card_type = models.ForeignKey(CardTypes,on_delete=models.CASCADE)
     card_holder_user = models.ForeignKey(User,on_delete=models.CASCADE)
-    identify_walletaddress = models.CharField(max_length=255)
+    identify_walletaddress = models.CharField(max_length=255,null=True)
     card_holder_surname = models.CharField(max_length=40)
     card_holder_name = models.CharField(max_length=40)
     card_holder_addressline1 = models.TextField()
@@ -82,7 +82,7 @@ class CardGenerated(models.Model):
 class TopupCard(models.Model):
     card = models.ForeignKey(CardGenerated,on_delete=models.CASCADE)
     from_user =  models.ForeignKey(User,on_delete=models.CASCADE)
-    identify_walletaddress = models.CharField(max_length=255)
+    identify_walletaddress = models.CharField(max_length=255,null=True)
 
     amount = models.FloatField()
     payment_amount = models.FloatField()
