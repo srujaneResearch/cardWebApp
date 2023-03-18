@@ -115,6 +115,7 @@ def coinpaymentWebhook(request):
                                 c.card_holder_city = city
                                 c.card_holder_country = country
                                 c.card_holder_zip = zipcode
+                                c.card_holder_state = state
                                 c.initial_payment_id = ipay
                                 c.card_balance = balance
                                 c.save()
